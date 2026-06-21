@@ -458,54 +458,65 @@ export function ReviewFeed({ user, dbReviews }: Props) {
         `}} />
       </section>
 
-      <div className="sticky top-14 z-20 bg-bg backdrop-blur-md border-b border-border">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
-          <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
-            {industries.map((ind) => (
-              <button
-                key={ind}
-                onClick={() => setIndustry(ind)}
-                aria-pressed={industry === ind}
-                className={`px-4 py-2.5 rounded-full text-sm whitespace-nowrap transition-colors duration-150 cursor-pointer min-h-[44px] flex items-center justify-center ${
-                  industry === ind
-                    ? "bg-primary text-primary-ink"
-                    : "bg-surface text-muted hover:bg-surface-hover hover:text-ink"
-                }`}
-                data-font="ui"
-              >
-                {ind === "ทั้งหมด" ? <><Building2 className="w-3.5 h-3.5 inline mr-1" /> ทั้งหมด</> : ind}
-              </button>
-            ))}
+      <div className="sticky top-14 z-20 bg-bg/95 backdrop-blur-md border-b border-border">
+        <div className="max-w-5xl mx-auto">
+          {/* Row 1: Industry filter pills — horizontal scroll, no wrap */}
+          <div className="px-4 pt-2.5 pb-0 overflow-x-auto no-scrollbar">
+            <div className="flex gap-1.5 w-max min-w-full pb-2.5">
+              {industries.map((ind) => (
+                <button
+                  key={ind}
+                  onClick={() => setIndustry(ind)}
+                  aria-pressed={industry === ind}
+                  className={`px-3.5 py-2 rounded-full text-sm whitespace-nowrap transition-colors duration-150 cursor-pointer min-h-[40px] flex items-center justify-center gap-1 shrink-0 ${
+                    industry === ind
+                      ? "bg-primary text-primary-ink font-medium"
+                      : "bg-surface text-muted hover:bg-surface-hover hover:text-ink"
+                  }`}
+                  data-font="ui"
+                >
+                  {ind === "ทั้งหมด" ? <><Building2 className="w-3.5 h-3.5" /> ทั้งหมด</> : ind}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 ml-auto">
-            <input
-              type="number"
-              aria-label="ค่าเบี้ยเลี้ยงขั้นต่ำ"
-              placeholder="เบี้ยเลี้ยงขั้นต่ำ"
-              value={payMin}
-              onChange={(e) => setPayMin(e.target.value)}
-              className="w-36 bg-surface rounded-xl px-4 py-2.5 text-sm text-ink placeholder:text-muted outline-none focus:ring-2 focus:ring-primary transition-shadow duration-150 min-h-[44px]"
-            />
+          {/* Row 2: Pay filter + Sort — compact row, full width on mobile */}
+          <div className="px-4 py-2 flex items-center gap-2 border-t border-border/50">
+            <div className="relative flex-1">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+              <input
+                type="number"
+                aria-label="ค่าเบี้ยเลี้ยงขั้นต่ำ"
+                placeholder="เบี้ยเลี้ยงขั้นต่ำ (บาท)"
+                value={payMin}
+                onChange={(e) => setPayMin(e.target.value)}
+                className="w-full bg-surface rounded-xl pl-8 pr-3 py-2 text-sm text-ink placeholder:text-muted outline-none focus:ring-2 focus:ring-primary transition-shadow duration-150 min-h-[40px]"
+              />
+            </div>
 
-            <div className="relative">
+            <div className="relative shrink-0">
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortOption)}
                 aria-label="จัดเรียงลำดับรีวิว"
-                className="bg-surface rounded-xl pl-4 pr-9 py-2.5 text-sm text-ink outline-none focus:ring-2 focus:ring-primary cursor-pointer appearance-none min-h-[44px]"
+                className="bg-surface rounded-xl pl-3 pr-8 py-2 text-sm text-ink outline-none focus:ring-2 focus:ring-primary cursor-pointer appearance-none min-h-[40px] font-medium"
                 data-font="ui"
               >
                 <option value="latest">ล่าสุด</option>
                 <option value="rating">คะแนนสูงสุด</option>
-                <option value="pay">เบี้ยเลี้ยงมาก→น้อย</option>
+                <option value="pay">เบี้ยเลี้ยงมากสุด</option>
               </select>
               <svg
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted pointer-events-none"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth={2}
+                strokeWidth={2.5}
               >
                 <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
