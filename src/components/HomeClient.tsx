@@ -11,32 +11,7 @@ type Props = {
   recentReviews: Review[];
 };
 
-export function HomeClient({ user, recentReviews }: Props) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
-
-  // Keyboard Shortcut: กด / เพื่อโฟกัสช่องค้นหาหลัก
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const activeEl = document.activeElement;
-      const isInput =
-        activeEl?.tagName === "INPUT" ||
-        activeEl?.tagName === "TEXTAREA" ||
-        activeEl?.getAttribute("contenteditable") === "true";
-      if (e.key === "/" && !isInput) {
-        e.preventDefault();
-        const searchInput = document.querySelector('input[type="search"]') as HTMLInputElement;
-        if (searchInput) {
-          searchInput.focus();
-          searchInput.select();
-        }
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
-  // คำสำหรับแสดงผลใน Hero Header
+function TypingTitle() {
   const words = ["Get", "Good", "Go", "Growth"];
   const [wordIndex, setWordIndex] = useState(0);
   const [currentText, setCurrentText] = useState("");
@@ -95,6 +70,41 @@ export function HomeClient({ user, recentReviews }: Props) {
 
   return (
     <>
+      <span className="text-primary-ink">{currentText}</span>
+      {!isReduced && (
+        <span className="font-light cursor-blink text-primary-ink -ml-0.5">|</span>
+      )}
+    </>
+  );
+}
+
+export function HomeClient({ user, recentReviews }: Props) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
+
+  // Keyboard Shortcut: กด / เพื่อโฟกัสช่องค้นหาหลัก
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const activeEl = document.activeElement;
+      const isInput =
+        activeEl?.tagName === "INPUT" ||
+        activeEl?.tagName === "TEXTAREA" ||
+        activeEl?.getAttribute("contenteditable") === "true";
+      if (e.key === "/" && !isInput) {
+        e.preventDefault();
+        const searchInput = document.querySelector('input[type="search"]') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+          searchInput.select();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  return (
+    <>
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary-light via-bg to-accent-pale/60 py-20 sm:py-28 relative overflow-hidden">
         {/* Background decorative glows */}
@@ -107,10 +117,7 @@ export function HomeClient({ user, recentReviews }: Props) {
             style={{ letterSpacing: "-0.02em", textWrap: "balance" }}
             data-font="ui"
           >
-            <span className="text-primary-ink">{currentText}</span>
-            {!isReduced && (
-              <span className="font-light cursor-blink text-primary-ink -ml-0.5">|</span>
-            )}
+            <TypingTitle />
             <span className="text-slate-800 ml-2">Intern</span>
           </h1>
 

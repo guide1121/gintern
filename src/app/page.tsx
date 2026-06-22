@@ -4,6 +4,57 @@ import { Navbar } from "@/components/Navbar";
 import { HomeClient } from "@/components/HomeClient";
 import { prisma } from "@/lib/db";
 import { Footer } from "@/components/Footer";
+import { unstable_cache } from "next/cache";
+
+const getRecentReviews = unstable_cache(
+  async () => {
+    return prisma.review.findMany({
+      take: 4,
+      include: {
+        company: {
+          select: {
+            id: true,
+            name: true,
+            industry: true,
+            logo: true,
+          },
+        },
+        likes: true,
+        comments: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            role: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  },
+  ["recent-reviews"],
+  {
+    revalidate: 60, // แคชข้อมูลเป็นเวลา 60 วินาที
+    tags: ["recent-reviews"],
+  }
+);
 
 export default async function Home() {
   const session = await auth();
@@ -28,47 +79,8 @@ export default async function Home() {
     }
   }
 
-  // ดึงข้อมูลรีวิวล่าสุด 4 รายการ เพื่อแสดงในส่วน Recent Reviews ของ Landing Page
-  const dbReviews = await prisma.review.findMany({
-    take: 4,
-    include: {
-      company: {
-        select: {
-          id: true,
-          name: true,
-          industry: true,
-          logo: true,
-        },
-      },
-      likes: true,
-      comments: {
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              image: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "asc",
-        },
-      },
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-          role: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  // ดึงข้อมูลรีวิวล่าสุด 4 รายการ จากแคช
+  const dbReviews = await getRecentReviews();
 
   return (
     <>
