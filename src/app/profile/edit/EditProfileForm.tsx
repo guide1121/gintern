@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "@/app/actions/profile";
-import { User, ArrowLeft, Loader2, Save, Camera, Trash2, RotateCcw, UploadCloud, X, Check } from "lucide-react";
+import { User, ArrowLeft, Loader2, Save, Camera, Trash2, RotateCcw, UploadCloud, X, Check, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import ReactCrop, { centerCrop, makeAspectCrop, Crop, PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
@@ -360,7 +360,7 @@ export function EditProfileForm({ user }: Props) {
         <span>กลับไปยังหน้าโปรไฟล์</span>
       </Link>
 
-      <div className="bg-white rounded-2xl border border-border shadow-sm p-6 sm:p-8">
+      <div className="bg-white rounded-2xl border border-border shadow-md hover:shadow-lg transition-shadow duration-200 p-6 sm:p-8">
         <div className="border-b border-border pb-4 mb-6">
           <h1 className="text-xl font-medium text-ink flex items-center gap-2" data-font="ui">
             <User className="w-5 h-5 text-primary" />
@@ -370,8 +370,9 @@ export function EditProfileForm({ user }: Props) {
         </div>
 
         {error && (
-          <div className="mb-5 p-4 rounded-xl bg-rose-50 border border-rose-100 text-rose-800 text-sm font-medium" data-font="ui">
-            ⚠️ {error}
+          <div className="mb-5 p-4 rounded-xl bg-rose-50 border border-rose-100 text-rose-800 text-sm font-medium flex items-center gap-2" data-font="ui">
+            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+            <span>{error}</span>
           </div>
         )}
 
@@ -418,7 +419,7 @@ export function EditProfileForm({ user }: Props) {
                 onClick={triggerFileInput}
                 className={`flex-1 w-full border-2 border-dashed rounded-xl p-4 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1.5 ${
                   isDragging 
-                    ? "border-primary bg-primary-light/10 scale-[1.01]" 
+                    ? "border-primary bg-primary-light/20 shadow-md" 
                     : "border-border hover:border-primary-light bg-white hover:bg-surface/30"
                 }`}
               >

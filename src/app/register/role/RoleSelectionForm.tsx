@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { saveUserRole } from "@/app/actions/profile";
-import { GraduationCap, BookOpen, Loader2, ArrowRight } from "lucide-react";
+import { GraduationCap, BookOpen, Loader2, ArrowRight, PartyPopper, AlertTriangle } from "lucide-react";
 
 type RoleOption = "recommender" | "reader";
 
@@ -22,6 +22,9 @@ export function RoleSelectionForm() {
         setError(res.error);
         setLoading(false);
       } else {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("showProfilePrompt", "true");
+        }
         // นำทางไปยังหน้าแรกของเว็บไซต์โดยตรงเพื่อล้างแคช
         window.location.href = "/";
       }
@@ -33,10 +36,11 @@ export function RoleSelectionForm() {
   }
 
   return (
-    <div className="w-full max-w-lg bg-white border border-border rounded-2xl p-6 sm:p-8 shadow-sm">
+    <div className="w-full max-w-lg bg-white border border-border rounded-2xl p-6 sm:p-8 shadow-md hover:shadow-lg transition-shadow duration-200">
       <div className="text-center mb-8">
-        <h1 className="text-xl font-medium text-ink" data-font="ui">
-          ยินดีต้อนรับสู่ GIntern! 🎉
+        <h1 className="text-xl font-medium text-ink flex items-center justify-center gap-1.5" data-font="ui">
+          <span>ยินดีต้อนรับสู่ GIntern!</span>
+          <PartyPopper className="w-5 h-5 text-primary animate-bounce shrink-0" />
         </h1>
         <p className="text-sm text-muted mt-2">
           เลือกบทบาทการเข้าใช้งานของคุณ เพื่อเริ่มต้นการเดินทาง
@@ -44,8 +48,9 @@ export function RoleSelectionForm() {
       </div>
 
       {error && (
-        <div className="mb-5 p-4 rounded-xl bg-rose-50 border border-rose-100 text-rose-800 text-sm font-medium" data-font="ui">
-          ⚠️ {error}
+        <div className="mb-5 p-4 rounded-xl bg-rose-50 border border-rose-100 text-rose-800 text-sm font-medium flex items-center gap-2" data-font="ui">
+          <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+          <span>{error}</span>
         </div>
       )}
 
@@ -54,9 +59,9 @@ export function RoleSelectionForm() {
         <button
           type="button"
           onClick={() => setSelectedRole("recommender")}
-          className={`text-left p-5 rounded-2xl border-2 transition-all flex items-start gap-4 cursor-pointer hover:scale-[1.01] ${
+          className={`text-left p-5 rounded-2xl border-2 transition-shadow duration-200 flex items-start gap-4 cursor-pointer shadow-md hover:shadow-lg ${
             selectedRole === "recommender"
-              ? "border-primary bg-primary-light/10 ring-2 ring-primary-light/50"
+              ? "border-primary bg-primary-light/10 ring-2 ring-primary-light/50 shadow-md shadow-primary/10"
               : "border-border hover:border-primary-light/50 bg-white"
           }`}
         >
@@ -77,9 +82,9 @@ export function RoleSelectionForm() {
         <button
           type="button"
           onClick={() => setSelectedRole("reader")}
-          className={`text-left p-5 rounded-2xl border-2 transition-all flex items-start gap-4 cursor-pointer hover:scale-[1.01] ${
+          className={`text-left p-5 rounded-2xl border-2 transition-shadow duration-200 flex items-start gap-4 cursor-pointer shadow-md hover:shadow-lg ${
             selectedRole === "reader"
-              ? "border-accent bg-accent/5 ring-2 ring-accent/20"
+              ? "border-accent bg-accent/5 ring-2 ring-accent/20 shadow-md shadow-accent/10"
               : "border-border hover:border-accent/40 bg-white"
           }`}
         >
@@ -100,7 +105,7 @@ export function RoleSelectionForm() {
       <button
         onClick={handleSave}
         disabled={!selectedRole || loading}
-        className="w-full bg-primary text-primary-ink py-3 rounded-xl font-medium hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:pointer-events-none cursor-pointer flex items-center justify-center gap-2"
+        className="w-full bg-primary text-primary-ink py-3 rounded-xl font-medium hover:bg-primary-hover shadow-md hover:shadow-lg transition-shadow duration-200 disabled:opacity-50 disabled:pointer-events-none cursor-pointer flex items-center justify-center gap-2"
         data-font="ui"
       >
         {loading ? (

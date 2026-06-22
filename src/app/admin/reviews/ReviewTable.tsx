@@ -60,8 +60,9 @@ export function ReviewTable({ reviews }: Props) {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-100 rounded-xl text-rose-800 text-sm font-medium" data-font="ui">
-          ⚠️ {error}
+        <div className="p-4 bg-rose-50 border border-rose-100 rounded-xl text-rose-800 text-sm font-medium flex items-center gap-2" data-font="ui">
+          <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+          <span>{error}</span>
         </div>
       )}
 

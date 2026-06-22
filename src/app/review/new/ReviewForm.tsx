@@ -15,7 +15,7 @@ function StarRating({ value, onChange, label }: { value: number; onChange: (v: n
             key={star}
             type="button"
             onClick={() => onChange(star)}
-            className="text-2xl transition-transform duration-100 active:scale-90 hover:scale-110 cursor-pointer focus:outline-none"
+            className="text-2xl transition-all duration-150 active:scale-95 hover:opacity-80 cursor-pointer focus:outline-none"
             aria-label={`${label} ${star} ดาว`}
           >
             <span className={star <= value ? "text-star" : "text-slate-200"}>★</span>
@@ -169,7 +169,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
       </div>
 
       {/* Progress Bar / Step Indicator */}
-      <div className="mb-6 select-none bg-white rounded-2xl p-6 border border-border/20">
+      <div className="mb-6 select-none bg-white rounded-2xl p-6 border border-border/20 shadow-md hover:shadow-lg transition-shadow duration-200">
         <div className="flex justify-between items-center relative">
           {/* Connecting line */}
           <div className="absolute top-5 left-8 right-8 h-0.5 bg-slate-100 -translate-y-1/2 z-0" />
@@ -211,7 +211,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
                 </button>
                 <span 
                   className={`text-xs mt-2 font-medium transition-all text-center whitespace-nowrap ${
-                    isCurrent ? "text-ink font-semibold scale-105" : "text-muted"
+                    isCurrent ? "text-ink font-semibold" : "text-muted"
                   }`}
                   data-font="ui"
                 >
@@ -233,7 +233,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
       {/* --- หน้าที่ 1: ข้อมูลเบื้องต้น + ไม่ระบุตัวตน --- */}
       {step === 1 && (
         <div className="flex flex-col gap-6 animate-in">
-          <div className="bg-white rounded-2xl p-6 border border-border/20">
+          <div className="bg-white rounded-2xl p-6 border border-border/20 shadow-md hover:shadow-lg transition-shadow duration-200">
             <h3 className="text-base font-semibold text-ink mb-4 flex items-center gap-1.5" data-font="ui">
               <span>1. ข้อมูลเบื้องต้น</span>
             </h3>
@@ -243,10 +243,10 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
               <button
                 type="button"
                 onClick={() => setExperienceType("intern")}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer ${
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-shadow duration-200 cursor-pointer shadow-md hover:shadow-lg ${
                   experienceType === "intern"
-                    ? "bg-primary text-primary-ink shadow-sm"
-                    : "text-muted hover:text-ink"
+                    ? "bg-primary text-primary-ink shadow-primary/20 font-semibold"
+                    : "text-muted bg-white hover:bg-surface-hover/50 hover:text-ink"
                 }`}
                 data-font="ui"
               >
@@ -255,10 +255,10 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
               <button
                 type="button"
                 onClick={() => setExperienceType("employee")}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer ${
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-shadow duration-200 cursor-pointer shadow-md hover:shadow-lg ${
                   experienceType === "employee"
-                    ? "bg-primary text-primary-ink shadow-sm"
-                    : "text-muted hover:text-ink"
+                    ? "bg-primary text-primary-ink shadow-primary/20 font-semibold"
+                    : "text-muted bg-white hover:bg-surface-hover/50 hover:text-ink"
                 }`}
                 data-font="ui"
               >
@@ -279,7 +279,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
                   placeholder="เช่น Google, Lineman Wongnai, SCB"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
-                  className="w-full bg-surface rounded-xl px-4 py-3 text-ink placeholder:text-muted outline-none border border-transparent focus:border-primary transition-all duration-150 min-h-[44px]"
+                  className="w-full bg-surface rounded-xl px-4 py-3 text-ink placeholder:text-muted outline-none border border-transparent focus:border-primary shadow-md focus:shadow-lg transition-shadow duration-200 min-h-[44px]"
                 />
               </div>
 
@@ -293,7 +293,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
                     id="industrySelect"
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
-                    className="w-full bg-surface rounded-xl px-4 py-3 text-ink outline-none border border-transparent focus:border-primary transition-all duration-150 cursor-pointer min-h-[44px]"
+                    className="w-full bg-surface rounded-xl px-4 py-3 text-ink outline-none border border-transparent focus:border-primary shadow-md focus:shadow-lg transition-shadow duration-200 cursor-pointer min-h-[44px]"
                     data-font="ui"
                   >
                     <option value="เทคโนโลยีและซอฟต์แวร์">เทคโนโลยีและซอฟต์แวร์</option>
@@ -319,7 +319,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
                       placeholder="เช่น อสังหาริมทรัพย์, การศึกษา"
                       value={customIndustry}
                       onChange={(e) => setCustomIndustry(e.target.value)}
-                      className="w-full bg-surface rounded-xl px-4 py-3 text-ink placeholder:text-muted outline-none border border-transparent focus:border-primary transition-all duration-150 min-h-[44px]"
+                      className="w-full bg-surface rounded-xl px-4 py-3 text-ink placeholder:text-muted outline-none border border-transparent focus:border-primary shadow-md focus:shadow-lg transition-shadow duration-200 min-h-[44px]"
                     />
                   </div>
                 )}
@@ -337,14 +337,14 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
                   placeholder="เช่น Software Engineer, UX/UI Intern, HR"
                   value={position}
                   onChange={(e) => setPosition(e.target.value)}
-                  className="w-full bg-surface rounded-xl px-4 py-3 text-ink placeholder:text-muted outline-none border border-transparent focus:border-primary transition-all duration-150 min-h-[44px]"
+                  className="w-full bg-surface rounded-xl px-4 py-3 text-ink placeholder:text-muted outline-none border border-transparent focus:border-primary shadow-md focus:shadow-lg transition-shadow duration-200 min-h-[44px]"
                 />
               </div>
             </div>
           </div>
 
           {/* ปิดบังตัวตน (Anonymous) */}
-          <div className="flex items-center justify-between p-4 bg-primary-light/20 border border-primary-light/50 rounded-xl">
+          <div className="flex items-center justify-between p-4 bg-primary-light/20 border border-primary-light/50 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200">
             <div className="flex items-start gap-3">
               {isAnonymous ? (
                 <Lock className="w-5 h-5 text-primary-ink shrink-0 mt-0.5" />
@@ -380,7 +380,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
             <button
               type="button"
               onClick={handleNextToStep2}
-              className="bg-primary text-primary-ink font-semibold px-6 py-3 rounded-xl shadow-sm hover:bg-primary-hover active:scale-[0.98] transition-all duration-150 cursor-pointer flex items-center gap-1.5 min-h-[44px]"
+              className="bg-primary text-primary-ink font-semibold px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer flex items-center gap-1.5 min-h-[44px]"
               data-font="ui"
             >
               <span>ถัดไป</span>
@@ -393,7 +393,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
       {/* --- หน้าที่ 2: ประสบการณ์ และเบี้ยเลี้ยง --- */}
       {step === 2 && (
         <div className="flex flex-col gap-6 animate-in">
-          <div className="bg-white rounded-2xl p-6 border border-border/20">
+          <div className="bg-white rounded-2xl p-6 border border-border/20 shadow-md hover:shadow-lg transition-shadow duration-200">
             <h3 className="text-base font-semibold text-ink mb-4 flex items-center gap-1.5" data-font="ui">
               <span>2. รายละเอียดประสบการณ์และค่าเบี้ยเลี้ยง</span>
             </h3>
@@ -410,7 +410,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
                   placeholder="เล่าประสบการณ์จริงของคุณ บรรยากาศการทำงาน ข้อดี-ข้อเสีย หรือคำแนะนำเพื่อช่วยรุ่นน้องตัดสินใจ..."
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="w-full bg-surface rounded-xl px-4 py-3 text-ink placeholder:text-muted outline-none border border-transparent focus:border-primary transition-all duration-150 h-40 resize-none leading-relaxed"
+                  className="w-full bg-surface rounded-xl px-4 py-3 text-ink placeholder:text-muted outline-none border border-transparent focus:border-primary shadow-md focus:shadow-lg transition-shadow duration-200 h-40 resize-none leading-relaxed"
                 />
               </div>
 
@@ -428,7 +428,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
                       placeholder="เช่น 15000, 300"
                       value={pay}
                       onChange={(e) => setPay(e.target.value)}
-                      className="w-full bg-surface rounded-xl pl-10 pr-4 py-3 text-ink placeholder:text-muted outline-none border border-transparent focus:border-primary transition-all duration-150 min-h-[44px]"
+                      className="w-full bg-surface rounded-xl pl-10 pr-4 py-3 text-ink placeholder:text-muted outline-none border border-transparent focus:border-primary shadow-md focus:shadow-lg transition-shadow duration-200 min-h-[44px]"
                     />
                   </div>
                   <select
@@ -436,7 +436,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
                     aria-label="หน่วยเบี้ยเลี้ยง"
                     value={payType}
                     onChange={(e) => setPayType(e.target.value)}
-                    className="bg-surface rounded-xl px-4 py-3 text-ink outline-none border border-transparent focus:border-primary transition-all duration-150 cursor-pointer min-h-[44px]"
+                    className="bg-surface rounded-xl px-4 py-3 text-ink outline-none border border-border/20 focus:border-primary shadow-sm transition-all duration-200 cursor-pointer min-h-[44px]"
                     data-font="ui"
                   >
                     <option value="บาท/เดือน">บาท/เดือน</option>
@@ -452,7 +452,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
             <button
               type="button"
               onClick={() => { setError(null); setStep(1); }}
-              className="bg-surface text-ink font-semibold px-6 py-3 rounded-xl hover:bg-surface-hover active:scale-[0.98] transition-all duration-150 cursor-pointer flex items-center gap-1.5 border border-border/50 min-h-[44px]"
+              className="bg-white text-ink font-semibold px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer flex items-center gap-1.5 border border-border/40 min-h-[44px]"
               data-font="ui"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -461,7 +461,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
             <button
               type="button"
               onClick={handleNextToStep3}
-              className="bg-primary text-primary-ink font-semibold px-6 py-3 rounded-xl shadow-sm hover:bg-primary-hover active:scale-[0.98] transition-all duration-150 cursor-pointer flex items-center gap-1.5 min-h-[44px]"
+              className="bg-primary text-primary-ink font-semibold px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer flex items-center gap-1.5 min-h-[44px]"
               data-font="ui"
             >
               <span>ถัดไป</span>
@@ -474,7 +474,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
       {/* --- หน้าที่ 3: รีวิวการให้คะแนนดาว --- */}
       {step === 3 && (
         <div className="flex flex-col gap-6 animate-in">
-          <div className="bg-white rounded-2xl p-6 border border-border/20">
+          <div className="bg-white rounded-2xl p-6 border border-border/20 shadow-md hover:shadow-lg transition-shadow duration-200">
             <div className="flex items-center justify-between mb-4 border-b border-border/40 pb-3">
               <h3 className="text-base font-semibold text-ink flex items-center gap-1.5" data-font="ui">
                 <span>3. การให้คะแนนดาว</span>
@@ -497,7 +497,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
             <button
               type="button"
               onClick={() => { setError(null); setStep(2); }}
-              className="bg-surface text-ink font-semibold px-6 py-3 rounded-xl hover:bg-surface-hover active:scale-[0.98] transition-all duration-150 cursor-pointer flex items-center gap-1.5 border border-border/50 min-h-[44px]"
+              className="bg-surface text-ink font-semibold px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer flex items-center gap-1.5 border border-border/50 min-h-[44px]"
               data-font="ui"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -506,8 +506,8 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
             <button
               type="submit"
               disabled={loading}
-              className={`bg-primary text-primary-ink font-semibold px-8 py-3 rounded-xl shadow-sm hover:bg-primary-hover active:scale-[0.98] transition-all duration-150 cursor-pointer flex items-center justify-center gap-2 min-h-[44px] ${
-                loading ? "opacity-75 cursor-not-allowed" : ""
+              className={`bg-primary text-primary-ink font-semibold px-8 py-3 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer flex items-center justify-center gap-2 min-h-[44px] ${
+                loading ? "opacity-75 cursor-not-allowed disabled:transform-none disabled:shadow-none" : ""
               }`}
               data-font="ui"
             >

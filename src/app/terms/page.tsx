@@ -37,7 +37,7 @@ export default async function TermsPage() {
           <p className="text-muted text-sm mt-2">ปรับปรุงล่าสุดเมื่อ 21 มิถุนายน 2026</p>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-border shadow-sm space-y-6 text-sm sm:text-base leading-relaxed text-ink/90">
+        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-border shadow-md hover:shadow-lg transition-all duration-300 space-y-6 text-sm sm:text-base leading-relaxed text-ink/90">
           <section className="space-y-3">
             <h2 className="text-lg font-bold text-ink flex items-center gap-2" data-font="ui">
               <FileText className="w-5 h-5 text-primary" />

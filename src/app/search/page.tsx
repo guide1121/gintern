@@ -1,11 +1,22 @@
 import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
-import { HomeClient } from "@/components/HomeClient";
+import { ReviewFeed } from "@/components/ReviewFeed";
 import { prisma } from "@/lib/db";
 import { Footer } from "@/components/Footer";
+import type { Metadata } from "next";
 
-export default async function Home() {
+export const metadata: Metadata = {
+  title: "ค้นหารีวิวฝึกงาน — GIntern",
+  description: "ค้นหาและเปรียบเทียบรีวิวที่ฝึกงานจากรุ่นพี่ตัวจริง คัดกรองตามตำแหน่งงาน บริษัท เบี้ยเลี้ยง และประเภทธุรกิจ",
+};
+
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
   const session = await auth();
   let currentUser = session?.user;
 
@@ -15,9 +26,6 @@ export default async function Home() {
       select: { id: true, name: true, email: true, image: true, role: true },
     });
     if (dbUser) {
-      if (!dbUser.role) {
-        redirect("/register/role");
-      }
       currentUser = {
         ...session.user,
         name: dbUser.name,
@@ -28,9 +36,8 @@ export default async function Home() {
     }
   }
 
-  // ดึงข้อมูลรีวิวล่าสุด 4 รายการ เพื่อแสดงในส่วน Recent Reviews ของ Landing Page
+  // ดึงข้อมูลรีวิวทั้งหมดจากฐานข้อมูลจริง
   const dbReviews = await prisma.review.findMany({
-    take: 4,
     include: {
       company: {
         select: {
@@ -70,11 +77,19 @@ export default async function Home() {
     },
   });
 
+  // ถอดค่าค้นหาจาก searchParams (Next.js 15 Async API)
+  const resolvedSearchParams = await searchParams;
+  const initialSearch = typeof resolvedSearchParams.q === "string" ? resolvedSearchParams.q : "";
+
   return (
     <>
       <Navbar user={currentUser} />
-      <div className="flex-1 flex flex-col min-h-[calc(100vh-3.5rem)] bg-[--bg]">
-        <HomeClient user={currentUser} recentReviews={dbReviews} />
+      <div className="flex-1 flex flex-col min-h-[calc(100vh-3.5rem)]">
+        <ReviewFeed 
+          user={currentUser} 
+          dbReviews={dbReviews} 
+          initialSearch={initialSearch} 
+        />
       </div>
       <Footer />
     </>

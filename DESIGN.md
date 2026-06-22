@@ -100,9 +100,13 @@ Tailwind default 4px base. Key spacing tokens:
 
 ### Card Style
 
-- **No border, no shadow** — clean flat cards
-- Differentiate cards from background using `--surface` background color
-- On hover: subtle scale or background shift, no shadow appear
+- **Elevated by Default (นูนตั้งแต่แรก)** — การ์ด กล่องข้อความ และปุ่มต่างๆ จะถูกกำหนดให้มีสไตล์ที่ยกตัวนูนขึ้นมาตั้งแต่เริ่มต้น (Elevated) โดยใช้เงานุ่มแบรนด์ (`Tinted Shadows` ที่อิงสีหมึกเขียวอมน้ำเงินเข้ม `--color-ink`) เพื่อสร้างชั้นและมิติความลึกที่สมจริงโดยไม่ต้องรอให้โต้ตอบ
+- ระดับเงาเริ่มต้น (Default):
+  - การ์ดมาตรฐาน คอนเทนเนอร์ และปุ่มหลัก: ใช้ `shadow-md` (เงาระดับปานกลางเพื่อให้ดูลอยเด่นชัดขึ้นมาแต่แรก)
+  - กล่องข้อความย่อยและฟิลด์อินพุต: ใช้ `shadow-md` หรือ `shadow-sm`
+  - หน้าต่าง Modal: ใช้ `shadow-2xl` เพื่อสร้างระยะลอยตัวที่สูงที่สุด
+- เมื่อโฮเวอร์ (On Hover):
+  - เพื่อลดความเป็น "AI template" (หลีกเลี่ยงการเคลื่อนไหวและการขยายขนาดที่มากเกินไป) การ์ดและปุ่มจะ**ไม่มีการขยายขนาด (no scale)** หรือขยับตำแหน่ง (no translation) แต่จะเปลี่ยนเฉดเงาจากเดิมให้นุ่มลึกขึ้น (เช่น เปลี่ยนเป็น `hover:shadow-lg` หรือคงระดับเงาเดิมและปรับแสง/ความสว่างของพื้นหลังแทน) ทำให้ UI ดูมีสติ มั่นคง และเป็นมืออาชีพมากขึ้น
 
 ### Grid
 
@@ -145,7 +149,7 @@ Tailwind default 4px base. Key spacing tokens:
 - Ease-out-quart curve
 - Reduced motion: crossfade or instant
 - No page-load choreography — content appears immediately
-- Card hover: subtle `transform: scale(1.01)` with 200ms ease-out
+- Card hover: เพื่อความสงบและเรียบหรูของ UI จะหลีกเลี่ยงการขยายขนาด (no scale) และไม่ขยับตำแหน่ง (no translation) ตอน Hover โดยเปลี่ยนมาเน้นที่การโต้ตอบด้วยระดับเงาที่นุ่มนวลลึกขึ้น (`hover:shadow-lg`) พร้อมการปรับพื้นหลังเล็กน้อย 200ms แบบ ease-out
 
 ## Accessibility
 

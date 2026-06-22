@@ -72,7 +72,7 @@ export function AdminSidebar() {
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                   isActive
-                    ? "bg-primary text-primary-ink shadow-lg shadow-primary/20 scale-[1.02]"
+                    ? "bg-primary text-primary-ink shadow-lg shadow-primary/20"
                     : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/60"
                 }`}
               >

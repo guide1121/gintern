@@ -69,7 +69,7 @@ export function ContactForm({ initialUser }: { initialUser?: { name?: string | n
             placeholder="เช่น สมชาย ใจดี"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted outline-none focus:border-primary transition-all min-h-[44px]"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted outline-none focus:border-primary shadow-md focus:shadow-lg transition-shadow duration-200 min-h-[44px]"
           />
         </div>
         <div className="space-y-1">
@@ -82,7 +82,7 @@ export function ContactForm({ initialUser }: { initialUser?: { name?: string | n
             placeholder="example@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted outline-none focus:border-primary transition-all min-h-[44px]"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted outline-none focus:border-primary shadow-md focus:shadow-lg transition-shadow duration-200 min-h-[44px]"
           />
         </div>
       </div>
@@ -96,7 +96,7 @@ export function ContactForm({ initialUser }: { initialUser?: { name?: string | n
           placeholder="เช่น มีข้อเสนอแนะเกี่ยวกับฟีเจอร์ใหม่"
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
-          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted outline-none focus:border-primary transition-all min-h-[44px]"
+          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted outline-none focus:border-primary shadow-md focus:shadow-lg transition-shadow duration-200 min-h-[44px]"
         />
       </div>
 
@@ -110,14 +110,14 @@ export function ContactForm({ initialUser }: { initialUser?: { name?: string | n
           placeholder="พิมพ์ข้อความของคุณที่ต้องการติดต่อทีมงานได้ที่นี่..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted outline-none focus:border-primary transition-all resize-none min-h-[120px]"
+          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-ink placeholder:text-muted outline-none focus:border-primary shadow-md focus:shadow-lg transition-shadow duration-200 resize-none min-h-[120px]"
         />
       </div>
 
       <button
         type="submit"
         disabled={status === "sending" || !name.trim() || !email.trim() || !message.trim()}
-        className="w-full bg-primary text-primary-ink font-semibold py-3 px-5 rounded-xl hover:bg-primary-hover active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer min-h-[44px]"
+        className="w-full bg-primary text-primary-ink font-semibold py-3 px-5 rounded-xl hover:bg-primary-hover shadow-md hover:shadow-lg active:scale-[0.98] transition-shadow duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none cursor-pointer min-h-[44px]"
       >
         {status === "sending" ? (
           <>

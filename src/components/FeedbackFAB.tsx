@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle, X, Send, CheckCircle2, ChevronDown } from "lucide-react";
+import { MessageCircle, X, Send, CheckCircle2, ChevronDown, PartyPopper, Smile } from "lucide-react";
 import { createFeedback } from "@/app/actions/feedback";
 
 export function FeedbackFAB() {
@@ -38,15 +38,15 @@ export function FeedbackFAB() {
         id="feedback-fab-btn"
         onClick={() => setOpen(!open)}
         aria-label="ส่ง Feedback"
-        className={`fixed bottom-6 right-6 z-40 flex items-center justify-center w-14 h-14 rounded-full shadow-2xl transition-all duration-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 ${
+        className={`fixed bottom-6 right-6 z-40 flex items-center justify-center w-14 h-14 rounded-full transition-shadow duration-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 ${
           open
-            ? "bg-surface border border-border rotate-0 scale-100"
-            : "bg-primary text-primary-ink hover:bg-primary-hover hover:scale-110 active:scale-95"
+            ? "bg-surface border border-border rotate-0 scale-100 shadow-md"
+            : "bg-primary text-primary-ink hover:bg-primary-hover shadow-md hover:shadow-lg active:scale-95"
         }`}
         style={{
           boxShadow: open
-            ? "0 4px 24px 0 rgba(0,0,0,0.12)"
-            : "0 8px 32px 0 rgba(var(--primary-rgb, 99 102 241) / 0.35)",
+            ? "var(--shadow-md)"
+            : "0 8px 24px 0 oklch(0.76 0.08 220 / 0.35)",
         }}
       >
         {open ? (
@@ -95,8 +95,9 @@ export function FeedbackFAB() {
                   <CheckCircle2 className="w-8 h-8 text-emerald-600" />
                 </div>
                 <div>
-                  <p className="font-semibold text-ink text-sm" data-font="ui">
-                    ส่งข้อความสำเร็จแล้ว! 🎉
+                  <p className="font-semibold text-ink text-sm flex items-center justify-center gap-1.5" data-font="ui">
+                    <span>ส่งข้อความสำเร็จแล้ว!</span>
+                    <PartyPopper className="w-4 h-4 text-emerald-600 animate-bounce" />
                   </p>
                   <p className="text-muted text-xs mt-1 leading-relaxed">
                     ทีมงานได้รับข้อความแล้ว<br />และจะติดต่อกลับทางอีเมลโดยเร็ว
@@ -117,8 +118,9 @@ export function FeedbackFAB() {
                     <MessageCircle className="w-3.5 h-3.5 text-primary-ink" />
                   </div>
                   <div className="bg-primary-light/30 border border-primary-light/50 rounded-2xl rounded-tl-sm px-3 py-2 max-w-[85%]">
-                    <p className="text-xs text-ink leading-relaxed">
-                      สวัสดีครับ 👋 มีข้อเสนอแนะ พบบั๊ก หรืออยากบอกอะไรทีมงานไหม? พิมพ์มาได้เลย!
+                    <p className="text-xs text-ink leading-relaxed flex items-start gap-1">
+                      <Smile className="w-3.5 h-3.5 text-primary shrink-0 inline -mt-0.5 mr-1" />
+                      <span>สวัสดีครับ มีข้อเสนอแนะ พบบั๊ก หรืออยากบอกอะไรทีมงานไหม? พิมพ์มาได้เลย!</span>
                     </p>
                   </div>
                 </div>
@@ -137,7 +139,7 @@ export function FeedbackFAB() {
                         placeholder="ชื่อของคุณ"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full bg-bg border border-border rounded-xl px-3 py-2 text-xs text-ink placeholder:text-muted outline-none focus:border-primary transition-all min-h-[38px]"
+                        className="w-full bg-bg border border-border rounded-xl px-3 py-2 text-xs text-ink placeholder:text-muted outline-none focus:border-primary shadow-md focus:shadow-lg transition-shadow duration-200 min-h-[38px]"
                       />
                     </div>
                     <div className="space-y-1">
@@ -152,7 +154,7 @@ export function FeedbackFAB() {
                         placeholder="email@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full bg-bg border border-border rounded-xl px-3 py-2 text-xs text-ink placeholder:text-muted outline-none focus:border-primary transition-all min-h-[38px]"
+                        className="w-full bg-bg border border-border rounded-xl px-3 py-2 text-xs text-ink placeholder:text-muted outline-none focus:border-primary shadow-md focus:shadow-lg transition-shadow duration-200 min-h-[38px]"
                       />
                     </div>
                   </div>
@@ -169,14 +171,14 @@ export function FeedbackFAB() {
                       placeholder="เขียนสิ่งที่ต้องการบอกทีมงาน..."
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      className="w-full bg-bg border border-border rounded-xl px-3 py-2.5 text-xs text-ink placeholder:text-muted outline-none focus:border-primary transition-all resize-none"
+                      className="w-full bg-bg border border-border rounded-xl px-3 py-2.5 text-xs text-ink placeholder:text-muted outline-none focus:border-primary shadow-md focus:shadow-lg transition-shadow duration-200 resize-none"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={status === "sending" || !name.trim() || !email.trim() || !message.trim()}
-                    className="w-full flex items-center justify-center gap-2 bg-primary text-primary-ink font-semibold text-xs py-2.5 px-4 rounded-xl hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer min-h-[40px]"
+                    className="w-full flex items-center justify-center gap-2 bg-primary text-primary-ink font-semibold text-xs py-2.5 px-4 rounded-xl hover:bg-primary-hover shadow-md hover:shadow-lg active:scale-[0.98] transition-shadow duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none cursor-pointer min-h-[40px]"
                     data-font="ui"
                   >
                     {status === "sending" ? (

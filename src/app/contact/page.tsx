@@ -40,7 +40,7 @@ export default async function ContactPage() {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-border shadow-sm">
+        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-border shadow-md hover:shadow-lg transition-all duration-300">
           <h2 className="text-lg font-bold text-ink mb-4" data-font="ui">ส่งข้อความถึงทีมงาน GIntern</h2>
           <ContactForm initialUser={currentUser ? { name: currentUser.name, email: currentUser.email } : undefined} />
         </div>

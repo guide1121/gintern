@@ -208,7 +208,7 @@ function ProfileReviewCard({
   return (
     <article 
       onClick={() => onCommentClick && onCommentClick(review)}
-      className="bg-surface rounded-2xl p-5 transition-transform duration-200 ease-out hover:scale-[1.005] cursor-pointer"
+      className="bg-surface rounded-2xl p-5 shadow-md hover:shadow-lg transition-shadow duration-200 ease-out cursor-pointer border border-border/40"
     >
       <div className="flex items-start gap-3 mb-3">
         {displayImage ? (
@@ -253,7 +253,7 @@ function ProfileReviewCard({
       </div>
 
       {review.pay && (
-        <div className="flex items-center gap-1.5 text-sm text-accent-ink bg-primary-light/20 border border-primary-light/50 px-3 py-1.5 rounded-full w-fit mb-4">
+        <div className="flex items-center gap-1.5 text-sm text-accent-ink bg-primary-light/20 border border-primary-light/50 px-3 py-1.5 rounded-full w-fit mb-4 shadow-sm">
           <Coins className="w-4 h-4 text-accent" />
           <span data-font="ui">
             {review.pay.toLocaleString()} {review.payType || "บาท/เดือน"}
@@ -288,7 +288,7 @@ function ProfileReviewCard({
             <Link
               onClick={(e) => e.stopPropagation()}
               href={`/review/new?editId=${review.id}`}
-              className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-primary-light/40 hover:bg-primary-light/60 text-primary-ink transition-colors duration-150 cursor-pointer min-h-[44px]"
+              className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-primary-light/40 hover:bg-primary-light/60 text-primary-ink shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer min-h-[44px]"
               data-font="ui"
             >
               <PenLine className="w-4 h-4" />
@@ -297,7 +297,7 @@ function ProfileReviewCard({
             <button
               onClick={handleDeleteClick}
               disabled={isDeleting}
-              className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-rose-50 hover:bg-rose-100/80 text-rose-600 transition-colors duration-150 cursor-pointer min-h-[44px] disabled:opacity-50"
+              className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-rose-50 hover:bg-rose-100/80 text-rose-600 shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer min-h-[44px] disabled:opacity-50 disabled:transform-none disabled:shadow-none"
               data-font="ui"
               aria-label="ลบรีวิว"
             >
@@ -347,7 +347,7 @@ export function ProfileContent({ dbUser }: Props) {
   return (
     <main className="flex-1 max-w-4xl mx-auto px-4 py-8 w-full">
       {/* Social Media Profile Wrapper */}
-      <div className="bg-white rounded-2xl overflow-hidden border border-border shadow-sm">
+      <div className="bg-white rounded-2xl overflow-hidden border border-border shadow-md hover:shadow-lg transition-shadow duration-200">
         {/* Cover Banner */}
         <div className="w-full h-40 sm:h-48 bg-gradient-to-r from-[#7FC1E8] via-[#BFE2F5] to-[#7DD0B8] relative overflow-hidden">
           {/* Decorative Circles */}
@@ -382,7 +382,7 @@ export function ProfileContent({ dbUser }: Props) {
             <div className="flex items-center gap-3 sm:translate-y-4 flex-wrap">
               <Link
                 href="/review/new"
-                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-primary-ink px-4.5 py-2.5 rounded-xl text-sm font-semibold transition-all active:scale-[0.97] cursor-pointer shadow-md shadow-primary/20 min-h-[44px]"
+                className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-primary-ink px-4.5 py-2.5 rounded-xl text-sm font-semibold hover:shadow-lg transition-shadow duration-200 cursor-pointer shadow-md min-h-[44px]"
                 data-font="ui"
               >
                 <PenLine className="w-4 h-4" />
@@ -390,7 +390,7 @@ export function ProfileContent({ dbUser }: Props) {
               </Link>
               <Link
                 href="/profile/edit"
-                className="flex items-center justify-center gap-2 border border-border hover:border-primary-light hover:bg-primary-light/10 text-ink px-4.5 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-[0.97] cursor-pointer bg-white min-h-[44px]"
+                className="flex items-center justify-center gap-2 border border-border hover:border-primary-light hover:bg-primary-light/10 text-ink px-4.5 py-2.5 rounded-xl text-sm font-medium shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer bg-white min-h-[44px]"
                 data-font="ui"
               >
                 <Edit3 className="w-4 h-4" />
@@ -483,7 +483,7 @@ export function ProfileContent({ dbUser }: Props) {
 
       {/* Profile Completeness Card */}
       {completenessScore < 100 && (
-        <div className="mt-6 bg-gradient-to-r from-primary-light/30 via-accent/5 to-primary-light/20 border border-primary-light/40 rounded-2xl p-5 shadow-sm">
+        <div className="mt-6 bg-gradient-to-r from-primary-light/30 via-accent/5 to-primary-light/20 border border-primary-light/40 rounded-2xl p-5 shadow-md hover:shadow-lg transition-shadow duration-200">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1.5 flex-1">
               <div className="flex items-center justify-between">
@@ -506,7 +506,7 @@ export function ProfileContent({ dbUser }: Props) {
             </div>
             <Link
               href="/profile/edit"
-              className="inline-flex items-center justify-center gap-1.5 bg-primary text-primary-ink px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-primary-hover transition-colors active:scale-[0.97] cursor-pointer whitespace-nowrap self-start sm:self-center"
+              className="inline-flex items-center justify-center gap-1.5 bg-primary text-primary-ink px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-primary-hover shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer whitespace-nowrap self-start sm:self-center"
               data-font="ui"
             >
               <PenLine className="w-4 h-4" />
@@ -560,13 +560,13 @@ export function ProfileContent({ dbUser }: Props) {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 bg-surface rounded-2xl border border-border/50">
+            <div className="text-center py-16 bg-surface rounded-2xl border border-border/50 shadow-md hover:shadow-lg transition-shadow duration-200">
               <FileText className="w-10 h-10 text-muted mx-auto mb-3" />
               <h3 className="text-base font-medium text-ink mb-1" data-font="ui">ยังไม่มีรีวิวของคุณ</h3>
               <p className="text-muted text-sm mb-5">มาร่วมแบ่งปันประสบการณ์การฝึกงานหรือการทำงานเพื่อประโยชน์ต่อรุ่นน้องตัวจริงกันนะ</p>
               <Link
                 href="/review/new"
-                className="inline-block bg-primary text-primary-ink px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-primary-hover transition-colors active:scale-[0.97]"
+                className="inline-block bg-primary text-primary-ink px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-primary-hover shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer"
                 data-font="ui"
               >
                 เขียนรีวิวแรก
@@ -587,13 +587,13 @@ export function ProfileContent({ dbUser }: Props) {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 bg-surface rounded-2xl border border-border/50">
+            <div className="text-center py-16 bg-surface rounded-2xl border border-border/50 shadow-md hover:shadow-lg transition-shadow duration-200">
               <ThumbsUp className="w-10 h-10 text-muted mx-auto mb-3" />
               <h3 className="text-base font-medium text-ink mb-1" data-font="ui">ยังไม่มีรีวิวที่ถูกใจ</h3>
               <p className="text-muted text-sm mb-5">เมื่อคุณพบรีวิวที่เป็นประโยชน์ สามารถกดไอคอนรูปหัวใจเพื่อเก็บประวัติไว้ที่นี่ได้</p>
               <Link
                 href="/"
-                className="inline-block bg-primary text-primary-ink px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-primary-hover transition-colors active:scale-[0.97]"
+                className="inline-block bg-primary text-primary-ink px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-primary-hover shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer"
                 data-font="ui"
               >
                 สำรวจรีวิวเลย
