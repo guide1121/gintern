@@ -96,7 +96,11 @@ export function HomeClient({ user, recentReviews }: Props) {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-primary-light py-20 sm:py-28 relative overflow-hidden">
+      <section className="bg-gradient-to-br from-primary-light via-bg to-accent-pale/60 py-20 sm:py-28 relative overflow-hidden">
+        {/* Background decorative glows */}
+        <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/25 rounded-full blur-3xl pointer-events-none opacity-70" />
+        <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-accent/20 rounded-full blur-3xl pointer-events-none opacity-70" />
+        
         <div className="max-w-3xl mx-auto px-4 text-center relative z-10">
           <h1
             className="text-5xl sm:text-6xl font-bold text-ink mb-6 flex items-center justify-center select-none text-center"

@@ -329,61 +329,6 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
     setCurrentPage(1);
   }, [search, industry, sort, payMin]);
 
-  const words = ["Get", "Good", "Go"];
-  const [wordIndex, setWordIndex] = useState(0);
-  const [currentText, setCurrentText] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isReduced, setIsReduced] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setIsReduced(mediaQuery.matches);
-
-    const handleMediaChange = (e: MediaQueryListEvent) => {
-      setIsReduced(e.matches);
-    };
-    mediaQuery.addEventListener("change", handleMediaChange);
-
-    return () => {
-      mediaQuery.removeEventListener("change", handleMediaChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (isReduced) {
-      setCurrentText(words[wordIndex]);
-      const timer = setTimeout(() => {
-        setWordIndex((prev) => (prev + 1) % words.length);
-      }, 2500);
-      return () => clearTimeout(timer);
-    }
-
-    let timer: NodeJS.Timeout;
-    const currentWord = words[wordIndex];
-
-    if (isDeleting) {
-      if (currentText === "") {
-        setIsDeleting(false);
-        setWordIndex((prev) => (prev + 1) % words.length);
-      } else {
-        timer = setTimeout(() => {
-          setCurrentText(currentWord.substring(0, currentText.length - 1));
-        }, 75);
-      }
-    } else {
-      if (currentText === currentWord) {
-        timer = setTimeout(() => {
-          setIsDeleting(true);
-        }, 1500);
-      } else {
-        timer = setTimeout(() => {
-          setCurrentText(currentWord.substring(0, currentText.length + 1));
-        }, 150);
-      }
-    }
-
-    return () => clearTimeout(timer);
-  }, [currentText, isDeleting, wordIndex, isReduced]);
 
   // ค้นหาและรวบรวมประเภทธุรกิจ (Industry) ทั้งหมดจากข้อมูลจริงใน Database
   const industries = useMemo(() => {
@@ -444,55 +389,27 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
 
   return (
     <>
-      <section className="bg-primary-light py-16 sm:py-20 relative overflow-hidden">
-
+      <section className="bg-gradient-to-br from-primary-light/50 via-bg to-accent-pale/30 py-10 sm:py-12 relative overflow-hidden border-b border-border/50">
+        {/* Background decorative glows */}
+        <div className="absolute -top-20 -left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+        
         <div className="max-w-3xl mx-auto px-4 text-center relative z-10">
-          {/* Animated GIntern Wordplay Header */}
-          <h1
-            className="text-4xl sm:text-6xl font-bold text-ink mb-6 flex items-center justify-center select-none text-center"
-            style={{ letterSpacing: "-0.02em", textWrap: "balance" }}
-            data-font="ui"
-          >
-            <span className="text-primary-ink">{currentText}</span>
-            {!isReduced && (
-              <span className="font-light cursor-blink text-primary-ink -ml-0.5">|</span>
-            )}
-            <span className="text-slate-800 ml-2">Intern</span>
+          <h1 className="text-2xl sm:text-3xl font-bold text-ink mb-2" data-font="ui">
+            ค้นหารีวิวฝึกงาน
           </h1>
-
-          <h2
-            className="text-xl sm:text-2xl font-medium text-ink/80 mb-3"
-            style={{ textWrap: "balance" }}
-          >
-            รีวิวฝึกงานจากรุ่นพี่ตัวจริง
-          </h2>
-          <p className="text-muted text-sm sm:text-base mb-6 max-w-lg mx-auto leading-relaxed">
-            ค้นหาประสบการณ์จริงจากคนที่เคยผ่านมา
-            <br className="sm:hidden" />
-            ไม่ fake ไม่ผ่านบริษัท
+          <p className="text-muted text-xs sm:text-sm mb-6 max-w-md mx-auto">
+            ค้นหาและคัดกรองประสบการณ์ฝึกงานจริงจากรุ่นพี่ในบริษัทและตำแหน่งต่างๆ
           </p>
-
-          {user && (
-            <div className="mb-8 flex justify-center">
-              <Link
-                href="/review/new"
-                className="inline-flex items-center gap-2 bg-primary text-primary-ink px-6 py-3 rounded-xl font-semibold hover:bg-primary-hover shadow-md hover:shadow-lg active:scale-[0.98] transition-all duration-200 cursor-pointer min-h-[44px]"
-                data-font="ui"
-              >
-                <PenLine className="w-4 h-4" />
-                <span>เขียนรีวิวประสบการณ์</span>
-              </Link>
-            </div>
-          )}
 
           <div className="relative max-w-xl mx-auto">
             <input
               type="search"
               aria-label="ค้นหาบริษัทหรือตำแหน่งงาน"
-              placeholder="ค้นหาบริษัท, ตำแหน่ง..."
+              placeholder="ค้นหาบริษัท, ตำแหน่ง หรือสายงานที่สนใจ..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white rounded-xl px-5 py-3.5 pl-12 text-ink placeholder:text-muted outline-none focus:ring-2 focus:ring-primary shadow-md focus:shadow-lg transition-all duration-200 text-base min-h-[44px]"
+              className="w-full bg-white rounded-xl px-5 py-3 pl-12 text-ink placeholder:text-muted outline-none focus:ring-2 focus:ring-primary shadow-md focus:shadow-lg transition-all duration-200 text-sm min-h-[44px]"
             />
             <svg
               className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted"
@@ -508,13 +425,6 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
         </div>
 
         <style dangerouslySetInnerHTML={{__html: `
-          @keyframes cursorBlink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-          }
-          .cursor-blink {
-            animation: cursorBlink 0.8s step-end infinite;
-          }
           @keyframes feedFadeIn {
             from { opacity: 0.4; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
