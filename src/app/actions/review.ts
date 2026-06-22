@@ -88,7 +88,7 @@ export async function createReview(data: CreateReviewInput) {
     });
 
     revalidatePath("/");
-    revalidateTag("recent-reviews");
+    revalidateTag("recent-reviews", "max");
     return { success: true };
   } catch (error: any) {
     console.error("Failed to create review:", error);
@@ -178,7 +178,7 @@ export async function updateReview(reviewId: string, data: CreateReviewInput) {
     });
 
     revalidatePath("/");
-    revalidateTag("recent-reviews");
+    revalidateTag("recent-reviews", "max");
     return { success: true };
   } catch (error: any) {
     console.error("Failed to update review:", error);
@@ -227,7 +227,7 @@ export async function toggleLike(reviewId: string) {
 
     revalidatePath("/");
     revalidatePath("/profile");
-    revalidateTag("recent-reviews");
+    revalidateTag("recent-reviews", "max");
     return { success: true };
   } catch (error) {
     console.error("Failed to toggle like:", error);
@@ -273,7 +273,7 @@ export async function addComment(reviewId: string, content: string) {
     });
 
     revalidatePath("/");
-    revalidateTag("recent-reviews");
+    revalidateTag("recent-reviews", "max");
     return { success: true, comment: newComment };
   } catch (error) {
     console.error("Failed to add comment:", error);
@@ -314,7 +314,7 @@ export async function deleteReview(reviewId: string) {
 
     revalidatePath("/");
     revalidatePath("/profile");
-    revalidateTag("recent-reviews");
+    revalidateTag("recent-reviews", "max");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete review:", error);
