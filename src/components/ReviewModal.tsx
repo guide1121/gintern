@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { X, Heart, MessageCircle, Coins, GraduationCap, Briefcase, Send, Sparkles } from "lucide-react";
+import { X, Heart, MessageCircle, Coins, GraduationCap, Briefcase, Send, Sparkles, Share2 } from "lucide-react";
 import { toggleLike, addComment } from "@/app/actions/review";
 import Link from "next/link";
 
@@ -98,9 +98,10 @@ type Props = {
   review: Review;
   onClose: () => void;
   currentUserId?: string | null;
+  onShareClick?: (review: Review) => void;
 };
 
-export function ReviewModal({ review, onClose, currentUserId }: Props) {
+export function ReviewModal({ review, onClose, currentUserId, onShareClick }: Props) {
   const [liked, setLiked] = useState(
     currentUserId ? review.likes.some((l) => l.userId === currentUserId) : false
   );
@@ -305,22 +306,35 @@ export function ReviewModal({ review, onClose, currentUserId }: Props) {
               </div>
             )}
 
-            {/* Like and Comment buttons */}
-            <div className="flex items-center gap-6">
-              <button
-                onClick={handleLike}
-                className={`flex items-center gap-1.5 text-sm transition-colors duration-150 cursor-pointer ${
-                  liked ? "text-rose-500 font-medium" : "text-muted hover:text-rose-500"
-                }`}
-                aria-label={liked ? "เอาถูกใจออก" : "ถูกใจ"}
-              >
-                <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
-                <span data-font="ui">{likesCount} ถูกใจ</span>
-              </button>
-              <span className="flex items-center gap-1.5 text-sm text-muted" data-font="ui">
-                <MessageCircle className="w-4 h-4" />
-                <span>{comments.length} ความคิดเห็น</span>
-              </span>
+            {/* Like, Comment, and Share buttons */}
+            <div className="flex items-center justify-between border-t border-border/40 pt-4">
+              <div className="flex items-center gap-6">
+                <button
+                  onClick={handleLike}
+                  className={`flex items-center gap-1.5 text-sm transition-colors duration-150 cursor-pointer ${
+                    liked ? "text-rose-500 font-medium" : "text-muted hover:text-rose-500"
+                  }`}
+                  aria-label={liked ? "เอาถูกใจออก" : "ถูกใจ"}
+                >
+                  <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
+                  <span data-font="ui">{likesCount} ถูกใจ</span>
+                </button>
+                <span className="flex items-center gap-1.5 text-sm text-muted" data-font="ui">
+                  <MessageCircle className="w-4 h-4" />
+                  <span>{comments.length} ความคิดเห็น</span>
+                </span>
+              </div>
+              
+              {onShareClick && (
+                <button
+                  onClick={() => onShareClick(review)}
+                  className="flex items-center gap-1.5 text-sm text-primary hover:text-primary-hover font-semibold transition-colors duration-150 cursor-pointer"
+                  aria-label="แชร์การ์ดรีวิว"
+                >
+                  <Share2 className="w-4 h-4" />
+                  <span data-font="ui">แชร์การ์ดรีวิว</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

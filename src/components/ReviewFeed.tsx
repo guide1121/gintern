@@ -2,8 +2,9 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { GraduationCap, Briefcase, Coins, Heart, MessageCircle, Search, PenLine, Building2, AlertTriangle, ShieldCheck } from "lucide-react";
+import { GraduationCap, Briefcase, Coins, Heart, MessageCircle, Search, PenLine, Building2, AlertTriangle, ShieldCheck, Share2 } from "lucide-react";
 import { ReviewModal } from "@/components/ReviewModal";
+import { ShareCardModal } from "@/components/ShareCardModal";
 import { toggleLike } from "@/app/actions/review";
 
 type Company = {
@@ -107,11 +108,13 @@ export function ExperienceBadge({ type }: { type: string }) {
 export function ReviewCard({ 
   review, 
   currentUserId,
-  onCommentClick 
+  onCommentClick,
+  onShareClick
 }: { 
   review: Review; 
   currentUserId?: string | null;
   onCommentClick?: (review: Review) => void;
+  onShareClick?: (review: Review) => void;
 }) {
   const [liked, setLiked] = useState(
     currentUserId ? review.likes.some((l) => l.userId === currentUserId) : false
@@ -280,6 +283,17 @@ export function ReviewCard({
           <MessageCircle className="w-4 h-4" />
           <span data-font="ui">{review.comments?.length || 0}</span>
         </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onShareClick) onShareClick(review);
+          }}
+          className="flex items-center gap-1.5 text-sm text-muted hover:text-primary transition-colors duration-150 cursor-pointer ml-auto"
+          aria-label="แชร์การ์ดรูปภาพ"
+        >
+          <Share2 className="w-4 h-4" />
+          <span className="hidden sm:inline text-xs font-semibold" data-font="ui">แชร์การ์ด</span>
+        </button>
       </div>
     </article>
   );
@@ -322,6 +336,7 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
   const [sort, setSort] = useState<SortOption>("latest");
   const [payMin, setPayMin] = useState("");
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
+  const [shareReview, setShareReview] = useState<Review | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
 
@@ -515,6 +530,7 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
                   review={review} 
                   currentUserId={user?.id} 
                   onCommentClick={(r) => setSelectedReview(r)}
+                  onShareClick={(r) => setShareReview(r)}
                 />
               ))}
             </div>
@@ -683,6 +699,16 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
           review={selectedReview}
           onClose={() => setSelectedReview(null)}
           currentUserId={user?.id}
+          onShareClick={(r) => {
+            setSelectedReview(null);
+            setShareReview(r as any);
+          }}
+        />
+      )}
+      {shareReview && (
+        <ShareCardModal
+          review={shareReview as any}
+          onClose={() => setShareReview(null)}
         />
       )}
     </>

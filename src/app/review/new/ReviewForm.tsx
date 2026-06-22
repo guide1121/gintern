@@ -47,6 +47,7 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const defaultIndustries = [
     "เทคโนโลยีและซอฟต์แวร์",
@@ -148,13 +149,15 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
       setError(result.error);
       setLoading(false);
     } else {
-      router.push("/");
       router.refresh();
+      setShowSuccessModal(true);
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+    <>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       {/* Title */}
       <div className="mb-2">
         <h1 className="text-2xl sm:text-3xl font-bold text-ink mb-2" data-font="ui">
@@ -516,6 +519,44 @@ export function ReviewForm({ initialData }: { initialData?: InitialReviewData | 
           </div>
         </div>
       )}
-    </form>
+      </form>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative border border-border/20 text-center animate-in zoom-in-95 duration-200">
+            {/* Icon checkmark */}
+            <div className="w-16 h-16 rounded-full bg-accent/20 text-accent-ink mx-auto mb-6 flex items-center justify-center shadow-md">
+              <Check className="w-8 h-8 stroke-[3px]" />
+            </div>
+
+            {/* Title */}
+            <h3 className="text-xl font-bold text-ink mb-2" data-font="ui">
+              {initialData?.id ? "บันทึกการแก้ไขเรียบร้อย!" : "เผยแพร่รีวิวสำเร็จแล้ว!"}
+            </h3>
+
+            {/* Description */}
+            <p className="text-muted text-sm mb-6 leading-relaxed">
+              {initialData?.id
+                ? "ข้อมูลรีวิวการทำงานของคุณได้รับการอัปเดตเรียบร้อยแล้ว"
+                : "ขอบคุณที่ร่วมแบ่งปันประสบการณ์ตรงเพื่อเป็นประโยชน์ต่อการตัดสินใจของเพื่อนๆ และรุ่นน้อง"}
+            </p>
+
+            {/* CTA Button */}
+            <button
+              type="button"
+              onClick={() => {
+                setShowSuccessModal(false);
+                router.push("/profile");
+              }}
+              className="w-full bg-primary text-primary-ink font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 active:scale-[0.98] transition-all shadow-md hover:shadow-lg cursor-pointer text-sm"
+              data-font="ui"
+            >
+              <span>ไปยังหน้าโปรไฟล์ของฉัน</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
