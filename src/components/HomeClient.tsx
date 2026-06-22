@@ -37,7 +37,7 @@ export function HomeClient({ user, recentReviews }: Props) {
   }, []);
 
   // คำสำหรับแสดงผลใน Hero Header
-  const words = ["Get", "Good", "Go"];
+  const words = ["Get", "Good", "Go", "Growth"];
   const [wordIndex, setWordIndex] = useState(0);
   const [currentText, setCurrentText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
