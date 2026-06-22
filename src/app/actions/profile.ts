@@ -80,6 +80,8 @@ export async function updateProfile(formData: FormData) {
   const studyPlace = formData.get("studyPlace") as string;
   const workPlace = formData.get("workPlace") as string;
   const fieldOfStudy = formData.get("fieldOfStudy") as string;
+  const instagram = formData.get("instagram") as string;
+  const facebook = formData.get("facebook") as string;
   const deleteAvatar = formData.get("deleteAvatar") as string; // "true" or "false"
   const avatarFile = formData.get("avatarFile") as File | null;
 
@@ -150,6 +152,8 @@ export async function updateProfile(formData: FormData) {
         studyPlace: studyPlace ? studyPlace.trim() : null,
         workPlace: workPlace ? workPlace.trim() : null,
         fieldOfStudy: fieldOfStudy ? fieldOfStudy.trim() : null,
+        instagram: instagram ? instagram.trim() : null,
+        facebook: facebook ? facebook.trim() : null,
         image: finalImageUrl,
       },
     });

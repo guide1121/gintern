@@ -20,6 +20,8 @@ model User {
   fieldOfStudy   String?
   bio            String?
   role           String?
+  instagram      String?
+  facebook       String?
 
   accounts Account[]
   sessions Session[]

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { updateProfile } from "@/app/actions/profile";
 import { User, ArrowLeft, Loader2, Save, Camera, Trash2, RotateCcw, UploadCloud, X, Check, AlertTriangle } from "lucide-react";
+import { InstagramIcon, FacebookIcon } from "@/components/icons";
 import Link from "next/link";
 import ReactCrop, { centerCrop, makeAspectCrop, Crop, PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
@@ -18,6 +19,8 @@ type Props = {
     fieldOfStudy: string | null;
     bio: string | null;
     role: string | null;
+    instagram?: string | null;
+    facebook?: string | null;
   };
 };
 
@@ -146,6 +149,8 @@ export function EditProfileForm({ user }: Props) {
   const [studyPlace, setStudyPlace] = useState(user.studyPlace || "");
   const [workPlace, setWorkPlace] = useState(user.workPlace || "");
   const [fieldOfStudy, setFieldOfStudy] = useState(user.fieldOfStudy || "");
+  const [instagram, setInstagram] = useState(user.instagram || "");
+  const [facebook, setFacebook] = useState(user.facebook || "");
 
   // ค้นหามหาวิทยาลัย (Combobox States)
   const [uniSearch, setUniSearch] = useState(user.studyPlace || "");
@@ -325,6 +330,8 @@ export function EditProfileForm({ user }: Props) {
     formData.append("studyPlace", studyPlace);
     formData.append("workPlace", workPlace);
     formData.append("fieldOfStudy", fieldOfStudy);
+    formData.append("instagram", instagram);
+    formData.append("facebook", facebook);
     formData.append("deleteAvatar", deleteAvatar ? "true" : "false");
     
     if (avatarFile) {
@@ -634,6 +641,47 @@ export function EditProfileForm({ user }: Props) {
               >
                 <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
+            </div>
+          </div>
+
+          {/* Social Media Links */}
+          <div className="border-t border-border pt-4 space-y-4">
+            <h3 className="text-sm font-medium text-ink" data-font="ui">
+              ช่องทางการติดต่อโซเชียลมีเดีย
+            </h3>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Instagram */}
+              <div className="space-y-1.5">
+                <label htmlFor="instagram" className="text-sm font-medium text-ink block flex items-center gap-1.5" data-font="ui">
+                  <InstagramIcon className="w-4 h-4 text-rose-500" />
+                  <span>Instagram</span>
+                </label>
+                <input
+                  type="text"
+                  id="instagram"
+                  value={instagram}
+                  onChange={(e) => setInstagram(e.target.value)}
+                  placeholder="กรอกชื่อบัญชี Instagram เช่น my_ig_name"
+                  className="w-full bg-white border border-border rounded-xl px-4 py-2.5 text-ink placeholder:text-muted outline-none focus:ring-2 focus:ring-primary transition-shadow text-sm"
+                />
+              </div>
+
+              {/* Facebook */}
+              <div className="space-y-1.5">
+                <label htmlFor="facebook" className="text-sm font-medium text-ink block flex items-center gap-1.5" data-font="ui">
+                  <FacebookIcon className="w-4 h-4 text-blue-600" />
+                  <span>Facebook</span>
+                </label>
+                <input
+                  type="text"
+                  id="facebook"
+                  value={facebook}
+                  onChange={(e) => setFacebook(e.target.value)}
+                  placeholder="กรอกชื่อบัญชี Facebook เช่น สมชาย รักดี"
+                  className="w-full bg-white border border-border rounded-xl px-4 py-2.5 text-ink placeholder:text-muted outline-none focus:ring-2 focus:ring-primary transition-shadow text-sm"
+                />
+              </div>
             </div>
           </div>
 

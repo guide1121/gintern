@@ -20,6 +20,8 @@ export default async function EditProfilePage() {
       fieldOfStudy: true,
       bio: true,
       role: true,
+      instagram: true,
+      facebook: true,
     },
   });
 

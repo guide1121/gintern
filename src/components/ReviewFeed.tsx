@@ -173,23 +173,57 @@ export function ReviewCard({
         </div>
       )}
       <div className="flex items-start gap-3 mb-3">
-        {displayImage ? (
-          <img
-            src={displayImage}
-            alt={displayName}
-            width={40}
-            height={40}
-            className="w-10 h-10 rounded-full object-cover shrink-0 border border-slate-100 ring-2 ring-primary-light/50"
-            referrerPolicy="no-referrer"
-          />
+        {!review.isAnonymous && review.user?.id ? (
+          <Link
+            href={`/profile/${review.user.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="shrink-0"
+          >
+            {displayImage ? (
+              <img
+                src={displayImage}
+                alt={displayName}
+                width={40}
+                height={40}
+                className="w-10 h-10 rounded-full object-cover border border-slate-100 ring-2 ring-primary-light/50 hover:opacity-85 transition-opacity"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-primary-light text-primary-ink flex items-center justify-center text-sm font-medium select-none hover:bg-primary-light/80 transition-colors" data-font="ui">
+                {initials}
+              </div>
+            )}
+          </Link>
         ) : (
-          <div className="w-10 h-10 rounded-full bg-primary-light text-primary-ink flex items-center justify-center text-sm font-medium shrink-0 select-none" data-font="ui">
-            {initials}
-          </div>
+          displayImage ? (
+            <img
+              src={displayImage}
+              alt={displayName}
+              width={40}
+              height={40}
+              className="w-10 h-10 rounded-full object-cover shrink-0 border border-slate-100 ring-2 ring-primary-light/50"
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-primary-light text-primary-ink flex items-center justify-center text-sm font-medium shrink-0 select-none" data-font="ui">
+              {initials}
+            </div>
+          )
         )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-medium text-ink" data-font="ui">{displayName}</span>
+            {!review.isAnonymous && review.user?.id ? (
+              <Link
+                href={`/profile/${review.user.id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="font-medium text-ink hover:text-primary hover:underline transition-colors"
+                data-font="ui"
+              >
+                {displayName}
+              </Link>
+            ) : (
+              <span className="font-medium text-ink" data-font="ui">{displayName}</span>
+            )}
             <ExperienceBadge type={review.experienceType} />
           </div>
           <p className="text-sm text-muted truncate">

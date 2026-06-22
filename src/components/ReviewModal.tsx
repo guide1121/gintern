@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Heart, MessageCircle, Coins, GraduationCap, Briefcase, Send, Sparkles } from "lucide-react";
 import { toggleLike, addComment } from "@/app/actions/review";
+import Link from "next/link";
 
 type User = {
   id: string;
@@ -193,27 +194,63 @@ export function ReviewModal({ review, onClose, currentUserId }: Props) {
           <div className="space-y-4">
             {/* Header: User Profile */}
             <div className="flex items-center gap-3">
-              {displayImage ? (
-                <img
-                  src={displayImage}
-                  alt={displayName}
-                  width={44}
-                  height={44}
-                  className="w-11 h-11 rounded-full object-cover shrink-0 ring-2 ring-primary-light"
-                />
-              ) : (
-                <div
-                  className="w-11 h-11 rounded-full bg-primary-light flex items-center justify-center text-sm font-medium text-primary-ink shrink-0 select-none"
-                  data-font="ui"
+              {!review.isAnonymous && review.user?.id ? (
+                <Link
+                  href={`/profile/${review.user.id}`}
+                  onClick={onClose}
+                  className="shrink-0"
                 >
-                  {initials}
-                </div>
+                  {displayImage ? (
+                    <img
+                      src={displayImage}
+                      alt={displayName}
+                      width={44}
+                      height={44}
+                      className="w-11 h-11 rounded-full object-cover ring-2 ring-primary-light hover:opacity-85 transition-opacity"
+                    />
+                  ) : (
+                    <div
+                      className="w-11 h-11 rounded-full bg-primary-light flex items-center justify-center text-sm font-medium text-primary-ink select-none hover:bg-primary-light/80 transition-colors"
+                      data-font="ui"
+                    >
+                      {initials}
+                    </div>
+                  )}
+                </Link>
+              ) : (
+                displayImage ? (
+                  <img
+                    src={displayImage}
+                    alt={displayName}
+                    width={44}
+                    height={44}
+                    className="w-11 h-11 rounded-full object-cover shrink-0 ring-2 ring-primary-light"
+                  />
+                ) : (
+                  <div
+                    className="w-11 h-11 rounded-full bg-primary-light flex items-center justify-center text-sm font-medium text-primary-ink shrink-0 select-none"
+                    data-font="ui"
+                  >
+                    {initials}
+                  </div>
+                )
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-semibold text-ink text-sm sm:text-base" data-font="ui">
-                    {displayName}
-                  </span>
+                  {!review.isAnonymous && review.user?.id ? (
+                    <Link
+                      href={`/profile/${review.user.id}`}
+                      onClick={onClose}
+                      className="font-semibold text-ink text-sm sm:text-base hover:text-primary hover:underline transition-colors"
+                      data-font="ui"
+                    >
+                      {displayName}
+                    </Link>
+                  ) : (
+                    <span className="font-semibold text-ink text-sm sm:text-base" data-font="ui">
+                      {displayName}
+                    </span>
+                  )}
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-primary-light text-primary-ink" data-font="ui">
                     {review.experienceType === "intern" ? (
                       <><GraduationCap className="w-3 h-3" /> Intern</>

@@ -16,6 +16,7 @@ import {
   ShieldAlert,
   Trash2
 } from "lucide-react";
+import { InstagramIcon, FacebookIcon } from "@/components/icons";
 import Link from "next/link";
 import { ReviewModal } from "@/components/ReviewModal";
 import { toggleLike, deleteReview } from "@/app/actions/review";
@@ -38,6 +39,8 @@ type User = {
   bio: string | null;
   createdAt: Date;
   role: string | null;
+  instagram?: string | null;
+  facebook?: string | null;
 };
 
 type Like = {
@@ -211,22 +214,55 @@ function ProfileReviewCard({
       className="bg-surface rounded-2xl p-5 shadow-md hover:shadow-lg transition-shadow duration-200 ease-out cursor-pointer border border-border/40"
     >
       <div className="flex items-start gap-3 mb-3">
-        {displayImage ? (
-          <img
-            src={displayImage}
-            alt={displayName}
-            width={40}
-            height={40}
-            className="w-10 h-10 rounded-full object-cover shrink-0 ring-2 ring-primary-light"
-          />
+        {!review.isAnonymous && author.id ? (
+          <Link
+            href={`/profile/${author.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="shrink-0"
+          >
+            {displayImage ? (
+              <img
+                src={displayImage}
+                alt={displayName}
+                width={40}
+                height={40}
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-primary-light hover:opacity-85 transition-opacity"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-lg font-medium text-primary-ink select-none hover:bg-primary-light/80 transition-colors" data-font="ui">
+                {initials}
+              </div>
+            )}
+          </Link>
         ) : (
-          <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-lg font-medium text-primary-ink shrink-0 select-none" data-font="ui">
-            {initials}
-          </div>
+          displayImage ? (
+            <img
+              src={displayImage}
+              alt={displayName}
+              width={40}
+              height={40}
+              className="w-10 h-10 rounded-full object-cover shrink-0 ring-2 ring-primary-light"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-lg font-medium text-primary-ink shrink-0 select-none" data-font="ui">
+              {initials}
+            </div>
+          )
         )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-medium text-ink" data-font="ui">{displayName}</span>
+            {!review.isAnonymous && author.id ? (
+              <Link
+                href={`/profile/${author.id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="font-medium text-ink hover:text-primary hover:underline transition-colors"
+                data-font="ui"
+              >
+                {displayName}
+              </Link>
+            ) : (
+              <span className="font-medium text-ink" data-font="ui">{displayName}</span>
+            )}
             <ExperienceBadge type={review.experienceType} />
           </div>
           <p className="text-sm text-muted truncate">
@@ -433,6 +469,30 @@ export function ProfileContent({ dbUser }: Props) {
               <p className="text-sm text-ink max-w-xl leading-relaxed mt-2" style={{ textWrap: "pretty" }}>
                 {dbUser.bio}
               </p>
+            )}
+
+            {/* Social Media Info */}
+            {(dbUser.instagram || dbUser.facebook) && (
+              <div className="flex flex-wrap items-center gap-2.5 pt-1.5 select-none">
+                {dbUser.instagram && (
+                  <div
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 border border-rose-100 text-xs text-rose-600 font-medium shadow-sm"
+                    data-font="ui"
+                  >
+                    <InstagramIcon className="w-3.5 h-3.5 shrink-0" />
+                    <span>{dbUser.instagram}</span>
+                  </div>
+                )}
+                {dbUser.facebook && (
+                  <div
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-100 text-xs text-blue-600 font-medium shadow-sm"
+                    data-font="ui"
+                  >
+                    <FacebookIcon className="w-3.5 h-3.5 shrink-0" />
+                    <span>{dbUser.facebook}</span>
+                  </div>
+                )}
+              </div>
             )}
 
             {/* Tags (Only show when data exists in DB) */}
