@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { GraduationCap, Briefcase, Search, PenLine, Building2, ShieldCheck, ArrowRight, Star, Coins, MessageSquare } from "lucide-react";
-import { ReviewCard, Review } from "@/components/ReviewFeed";
+import { ReviewCard, Review } from "@/components/ReviewCard";
 import { ReviewModal } from "@/components/ReviewModal";
+import { ShareCardModal } from "@/components/ShareCardModal";
 
 type Props = {
   user?: { id?: string | null; name?: string | null; email?: string | null; image?: string | null; role?: string | null } | null;
@@ -81,6 +82,7 @@ function TypingTitle() {
 export function HomeClient({ user, recentReviews }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
+  const [shareReview, setShareReview] = useState<Review | null>(null);
 
   // Keyboard Shortcut: กด / เพื่อโฟกัสช่องค้นหาหลัก
   useEffect(() => {
@@ -274,6 +276,7 @@ export function HomeClient({ user, recentReviews }: Props) {
                   review={review} 
                   currentUserId={user?.id} 
                   onCommentClick={(r) => setSelectedReview(r)}
+                  onShareClick={(r) => setShareReview(r)}
                 />
               ))}
             </div>
@@ -334,6 +337,16 @@ export function HomeClient({ user, recentReviews }: Props) {
           review={selectedReview}
           onClose={() => setSelectedReview(null)}
           currentUserId={user?.id}
+          onShareClick={(r) => {
+            setSelectedReview(null);
+            setShareReview(r);
+          }}
+        />
+      )}
+      {shareReview && (
+        <ShareCardModal
+          review={shareReview}
+          onClose={() => setShareReview(null)}
         />
       )}
     </>

@@ -16,7 +16,8 @@ import {
 import { InstagramIcon, FacebookIcon } from "@/components/icons";
 import Link from "next/link";
 import { ReviewModal } from "@/components/ReviewModal";
-import { toggleLike } from "@/app/actions/review";
+import { ReviewCard, Review } from "@/components/ReviewCard";
+import { ShareCardModal } from "@/components/ShareCardModal";
 
 type Company = {
   id: string;
@@ -87,177 +88,11 @@ type Props = {
   currentUserId: string | null;
 };
 
-function Stars({ rating }: { rating: number }) {
-  const full = Math.floor(rating);
-  const half = rating % 1 >= 0.5;
-  return (
-    <span className="text-lg text-star tracking-wider" role="img" aria-label={`${rating} ดาว`}>
-      {"★".repeat(full)}
-      {half && "★"}
-      {"☆".repeat(5 - full - (half ? 1 : 0))}
-    </span>
-  );
-}
 
-function RatingBar({ label, value }: { label: string; value: number }) {
-  const pct = (value / 5) * 100;
-  return (
-    <div className="flex items-center gap-2 text-sm">
-      <span className="text-muted w-20 shrink-0">{label}</span>
-      <div className="flex-1 h-2 rounded-full bg-primary-light/50 overflow-hidden">
-        <div
-          className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-      <span className="text-ink w-5 text-right font-medium" data-font="ui">
-        {value}
-      </span>
-    </div>
-  );
-}
-
-function ExperienceBadge({ type }: { type: string }) {
-  if (type === "intern") {
-    return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-light text-primary-ink" data-font="ui">
-        <GraduationCap className="w-3.5 h-3.5" /> Intern
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-light/30 border border-primary-light/50 text-accent-ink" data-font="ui">
-      <Briefcase className="w-3.5 h-3.5" /> พนักงาน
-    </span>
-  );
-}
-
-function PublicReviewCard({ 
-  review, 
-  author, 
-  currentUserId, 
-  onCommentClick 
-}: { 
-  review: DbReview; 
-  author: User; 
-  currentUserId?: string | null; 
-  onCommentClick?: (review: DbReview) => void;
-}) {
-  const [liked, setLiked] = useState(
-    currentUserId ? review.likes.some((l) => l.userId === currentUserId) : false
-  );
-  const [likesCount, setLikesCount] = useState(review.likes.length);
-
-  const handleLikeClick = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!currentUserId) {
-      alert("กรุณาเข้าสู่ระบบเพื่อกดถูกใจ");
-      return;
-    }
-    setLiked(!liked);
-    setLikesCount((prev) => (liked ? prev - 1 : prev + 1));
-    const result = await toggleLike(review.id);
-    if (result.error) {
-      setLiked(liked);
-      setLikesCount(likesCount);
-      alert(result.error);
-    }
-  };
-
-  const formattedDate = new Date(review.createdAt).toLocaleDateString("th-TH", {
-    day: "numeric",
-    month: "short",
-    year: "numeric"
-  });
-
-  const displayName = author.name || "ผู้ใช้งาน";
-  const initials = (author.name || "?").charAt(0).toUpperCase();
-
-  return (
-    <article 
-      onClick={() => onCommentClick && onCommentClick(review)}
-      className="bg-surface rounded-2xl p-5 shadow-md hover:shadow-lg transition-shadow duration-200 ease-out cursor-pointer border border-border/40"
-    >
-      <div className="flex items-start gap-3 mb-3">
-        {author.image ? (
-          <img
-            src={author.image}
-            alt={displayName}
-            width={40}
-            height={40}
-            className="w-10 h-10 rounded-full object-cover shrink-0 ring-2 ring-primary-light"
-          />
-        ) : (
-          <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-lg font-medium text-primary-ink shrink-0 select-none" data-font="ui">
-            {initials}
-          </div>
-        )}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-medium text-ink" data-font="ui">{displayName}</span>
-            <ExperienceBadge type={review.experienceType} />
-          </div>
-          <p className="text-sm text-muted truncate">
-            {review.company.name} · {review.position}
-          </p>
-        </div>
-        <span className="text-xs text-muted shrink-0 pt-1">{formattedDate}</span>
-      </div>
-
-      <div className="flex items-center gap-2 mb-3">
-        <Stars rating={review.ratingOverall} />
-        <span className="text-ink font-medium" data-font="ui">{review.ratingOverall}</span>
-      </div>
-
-      <p className="text-ink leading-[1.7] mb-4 text-sm" style={{ textWrap: "pretty" }}>
-        {review.content}
-      </p>
-
-      <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 mb-4">
-        <RatingBar label="พี่เลี้ยง" value={review.ratingMentor} />
-        <RatingBar label="การเรียนรู้" value={review.ratingLearning} />
-        <RatingBar label="ปริมาณงาน" value={review.ratingWorkload} />
-        <RatingBar label="วัฒนธรรม" value={review.ratingCulture} />
-      </div>
-
-      {review.pay && (
-        <div className="flex items-center gap-1.5 text-sm text-accent-ink bg-primary-light/20 border border-primary-light/50 px-3 py-1.5 rounded-full w-fit mb-4 shadow-sm">
-          <Coins className="w-4 h-4 text-accent" />
-          <span data-font="ui">
-            {review.pay.toLocaleString()} {review.payType || "บาท/เดือน"}
-          </span>
-        </div>
-      )}
-
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-3 border-t border-border">
-        <button
-          onClick={handleLikeClick}
-          className={`flex items-center gap-1.5 text-sm transition-colors duration-150 cursor-pointer min-h-[44px] ${
-            liked ? "text-rose-500 font-semibold" : "text-muted hover:text-rose-500"
-          }`}
-          aria-label={liked ? "เอาถูกใจออก" : "ถูกใจ"}
-        >
-          <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
-          <span data-font="ui">{likesCount}</span>
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            if (onCommentClick) onCommentClick(review);
-          }}
-          className="flex items-center gap-1.5 text-sm text-muted hover:text-primary transition-colors duration-150 cursor-pointer min-h-[44px]"
-          aria-label="คอมเมนต์"
-        >
-          <MessageCircle className="w-4 h-4" />
-          <span data-font="ui">{review.comments.length}</span>
-        </button>
-      </div>
-    </article>
-  );
-}
 
 export function PublicProfileContent({ targetUser, currentUserId }: Props) {
   const [selectedReview, setSelectedReview] = useState<DbReview | null>(null);
+  const [shareReview, setShareReview] = useState<Review | null>(null);
 
   const initials = (targetUser.name || "?").charAt(0).toUpperCase();
   const joinDate = new Date(targetUser.createdAt).toLocaleDateString("th-TH", {
@@ -433,12 +268,12 @@ export function PublicProfileContent({ targetUser, currentUserId }: Props) {
         {targetUser.reviews.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {targetUser.reviews.map((review) => (
-              <PublicReviewCard 
+              <ReviewCard 
                 key={review.id} 
-                review={review} 
-                author={targetUser} 
+                review={{ ...review, user: targetUser } as any} 
                 currentUserId={currentUserId} 
-                onCommentClick={(r) => setSelectedReview(r)}
+                onCommentClick={(r) => setSelectedReview(r as any)}
+                onShareClick={(r) => setShareReview(r as any)}
               />
             ))}
           </div>
@@ -456,6 +291,16 @@ export function PublicProfileContent({ targetUser, currentUserId }: Props) {
           review={selectedReview as any}
           onClose={() => setSelectedReview(null)}
           currentUserId={currentUserId}
+          onShareClick={(r) => {
+            setSelectedReview(null);
+            setShareReview(r as any);
+          }}
+        />
+      )}
+      {shareReview && (
+        <ShareCardModal
+          review={shareReview as any}
+          onClose={() => setShareReview(null)}
         />
       )}
     </main>

@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { X, Download, Share2, Sparkles, Check, Copy } from "lucide-react";
 import { toPng } from "html-to-image";
-import { ExperienceBadge, Stars } from "./ReviewFeed";
+import { ExperienceBadge, Stars } from "./ReviewCard";
 
 type Company = {
   id: string;
@@ -300,13 +300,22 @@ export function ShareCardModal({ review, onClose }: Props) {
 
                 {/* Footer ลายน้ำเพื่อชวนให้คนเสิร์ช */}
                 <div className="flex items-center justify-between border-t border-white/20 pt-3">
-                  {review.pay ? (
-                    <div>
-                      <p className="text-[8px] opacity-75">เบี้ยเลี้ยงที่ได้รับ</p>
-                      <p className="text-[11px] font-bold" data-font="ui">
-                        {review.pay.toLocaleString()} {review.payType || "บาท/เดือน"}
-                      </p>
-                    </div>
+                  {review.pay !== null ? (
+                    review.pay > 0 ? (
+                      <div>
+                        <p className="text-[8px] opacity-75">เบี้ยเลี้ยงที่ได้รับ</p>
+                        <p className="text-[11px] font-bold" data-font="ui">
+                          {review.pay.toLocaleString()} {review.payType || "บาท/เดือน"}
+                        </p>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-[8px] opacity-75">เบี้ยเลี้ยงที่ได้รับ</p>
+                        <p className="text-[11px] font-bold text-rose-600" data-font="ui">
+                          ไม่มีเบี้ยเลี้ยง
+                        </p>
+                      </div>
+                    )
                   ) : (
                     <div>
                       <p className="text-[8px] opacity-75">ที่ฝึกงานนี้</p>

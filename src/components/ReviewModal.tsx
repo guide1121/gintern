@@ -297,12 +297,24 @@ export function ReviewModal({ review, onClose, currentUserId, onShareClick }: Pr
 
           <div className="mt-6 pt-4 border-t border-border/40">
             {/* Pay check */}
-            {review.pay && (
-              <div className="flex items-center gap-1.5 text-xs text-accent-ink bg-primary-light/20 border border-primary-light/50 px-3 py-1.5 rounded-full w-fit mb-4 shadow-md">
-                <Coins className="w-4 h-4 text-accent" />
-                <span data-font="ui">
-                  เบี้ยเลี้ยง: {review.pay.toLocaleString()} {review.payType || "บาท/เดือน"}
-                </span>
+            {review.pay !== null ? (
+              review.pay > 0 ? (
+                <div className="flex items-center gap-1.5 text-xs text-accent-ink bg-primary-light/20 border border-primary-light/50 px-3 py-1.5 rounded-full w-fit mb-4 shadow-md">
+                  <Coins className="w-4 h-4 text-accent" />
+                  <span data-font="ui">
+                    เบี้ยเลี้ยง: {review.pay.toLocaleString()} {review.payType || "บาท/เดือน"}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 text-xs text-rose-600 bg-rose-50/50 border border-rose-100 px-3 py-1.5 rounded-full w-fit mb-4 shadow-md">
+                  <Coins className="w-4 h-4 text-rose-400" />
+                  <span data-font="ui">ไม่มีเบี้ยเลี้ยง</span>
+                </div>
+              )
+            ) : (
+              <div className="flex items-center gap-1.5 text-xs text-slate-400 bg-slate-50 border border-slate-200/60 px-3 py-1.5 rounded-full w-fit mb-4 shadow-md">
+                <Coins className="w-4 h-4 text-slate-300" />
+                <span data-font="ui">ไม่ระบุเบี้ยเลี้ยง</span>
               </div>
             )}
 

@@ -19,7 +19,9 @@ import {
 import { InstagramIcon, FacebookIcon } from "@/components/icons";
 import Link from "next/link";
 import { ReviewModal } from "@/components/ReviewModal";
-import { toggleLike, deleteReview } from "@/app/actions/review";
+import { deleteReview } from "@/app/actions/review";
+import { ReviewCard, Review } from "@/components/ReviewCard";
+import { ShareCardModal } from "@/components/ShareCardModal";
 
 type Company = {
   id: string;
@@ -100,260 +102,13 @@ type Props = {
   };
 };
 
-function Stars({ rating }: { rating: number }) {
-  const full = Math.floor(rating);
-  const half = rating % 1 >= 0.5;
-  return (
-    <span className="text-lg text-star tracking-wider" role="img" aria-label={`${rating} ดาว`}>
-      {"★".repeat(full)}
-      {half && "★"}
-      {"☆".repeat(5 - full - (half ? 1 : 0))}
-    </span>
-  );
-}
 
-function RatingBar({ label, value }: { label: string; value: number }) {
-  const pct = (value / 5) * 100;
-  return (
-    <div className="flex items-center gap-2 text-sm">
-      <span className="text-muted w-20 shrink-0">{label}</span>
-      <div className="flex-1 h-2 rounded-full bg-primary-light/50 overflow-hidden">
-        <div
-          className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-      <span className="text-ink w-5 text-right font-medium" data-font="ui">
-        {value}
-      </span>
-    </div>
-  );
-}
-
-function ExperienceBadge({ type }: { type: string }) {
-  if (type === "intern") {
-    return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-light text-primary-ink" data-font="ui">
-        <GraduationCap className="w-3.5 h-3.5" /> Intern
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-light/30 border border-primary-light/50 text-accent-ink" data-font="ui">
-      <Briefcase className="w-3.5 h-3.5" /> พนักงาน
-    </span>
-  );
-}
-
-function ProfileReviewCard({ 
-  review, 
-  author, 
-  currentUserId, 
-  onCommentClick 
-}: { 
-  review: DbReview; 
-  author: User; 
-  currentUserId?: string | null; 
-  onCommentClick?: (review: DbReview) => void;
-}) {
-  const [liked, setLiked] = useState(
-    currentUserId ? review.likes.some((l) => l.userId === currentUserId) : false
-  );
-  const [likesCount, setLikesCount] = useState(review.likes.length);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    setLiked(currentUserId ? review.likes.some((l) => l.userId === currentUserId) : false);
-    setLikesCount(review.likes.length);
-  }, [review.likes, currentUserId]);
-
-  const handleLikeClick = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!currentUserId) {
-      alert("กรุณาเข้าสู่ระบบเพื่อกดถูกใจ");
-      return;
-    }
-    setLiked(!liked);
-    setLikesCount((prev) => (liked ? prev - 1 : prev + 1));
-    const result = await toggleLike(review.id);
-    if (result.error) {
-      setLiked(liked);
-      setLikesCount(likesCount);
-      alert(result.error);
-    }
-  };
-
-  const handleDeleteClick = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบรีวิวนี้? การดำเนินการนี้ไม่สามารถยกเลิกได้")) {
-      return;
-    }
-
-    setIsDeleting(true);
-    const result = await deleteReview(review.id);
-    setIsDeleting(false);
-
-    if (result.error) {
-      alert(result.error);
-    }
-  };
-
-  const formattedDate = new Date(review.createdAt).toLocaleDateString("th-TH", {
-    day: "numeric",
-    month: "short",
-    year: "numeric"
-  });
-
-  const displayImage = review.isAnonymous ? null : author.image;
-  const displayName = review.isAnonymous ? "รุ่นพี่ไม่ระบุตัวตน" : (author.name || "ผู้ใช้งาน");
-  const initials = review.isAnonymous ? "พี่" : (author.name || "?").charAt(0).toUpperCase();
-
-  return (
-    <article 
-      onClick={() => onCommentClick && onCommentClick(review)}
-      className="bg-surface rounded-2xl p-5 shadow-md hover:shadow-lg transition-shadow duration-200 ease-out cursor-pointer border border-border/40"
-    >
-      <div className="flex items-start gap-3 mb-3">
-        {!review.isAnonymous && author.id ? (
-          <Link
-            href={`/profile/${author.id}`}
-            onClick={(e) => e.stopPropagation()}
-            className="shrink-0"
-          >
-            {displayImage ? (
-              <img
-                src={displayImage}
-                alt={displayName}
-                width={40}
-                height={40}
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-primary-light hover:opacity-85 transition-opacity"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-lg font-medium text-primary-ink select-none hover:bg-primary-light/80 transition-colors" data-font="ui">
-                {initials}
-              </div>
-            )}
-          </Link>
-        ) : (
-          displayImage ? (
-            <img
-              src={displayImage}
-              alt={displayName}
-              width={40}
-              height={40}
-              className="w-10 h-10 rounded-full object-cover shrink-0 ring-2 ring-primary-light"
-            />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-lg font-medium text-primary-ink shrink-0 select-none" data-font="ui">
-              {initials}
-            </div>
-          )
-        )}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            {!review.isAnonymous && author.id ? (
-              <Link
-                href={`/profile/${author.id}`}
-                onClick={(e) => e.stopPropagation()}
-                className="font-medium text-ink hover:text-primary hover:underline transition-colors"
-                data-font="ui"
-              >
-                {displayName}
-              </Link>
-            ) : (
-              <span className="font-medium text-ink" data-font="ui">{displayName}</span>
-            )}
-            <ExperienceBadge type={review.experienceType} />
-          </div>
-          <p className="text-sm text-muted truncate">
-            {review.company.name} · {review.position}
-          </p>
-        </div>
-        <span className="text-xs text-muted shrink-0 pt-1">{formattedDate}</span>
-      </div>
-
-      <div className="flex items-center gap-2 mb-3">
-        <Stars rating={review.ratingOverall} />
-        <span className="text-ink font-medium" data-font="ui">{review.ratingOverall}</span>
-      </div>
-
-      <p className="text-ink leading-[1.7] mb-4 text-sm" style={{ textWrap: "pretty" }}>
-        {review.content}
-      </p>
-
-      <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 mb-4">
-        <RatingBar label="พี่เลี้ยง" value={review.ratingMentor} />
-        <RatingBar label="การเรียนรู้" value={review.ratingLearning} />
-        <RatingBar label="ปริมาณงาน" value={review.ratingWorkload} />
-        <RatingBar label="วัฒนธรรม" value={review.ratingCulture} />
-      </div>
-
-      {review.pay && (
-        <div className="flex items-center gap-1.5 text-sm text-accent-ink bg-primary-light/20 border border-primary-light/50 px-3 py-1.5 rounded-full w-fit mb-4 shadow-sm">
-          <Coins className="w-4 h-4 text-accent" />
-          <span data-font="ui">
-            {review.pay.toLocaleString()} {review.payType || "บาท/เดือน"}
-          </span>
-        </div>
-      )}
-
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-3 border-t border-border">
-        <button
-          onClick={handleLikeClick}
-          className={`flex items-center gap-1.5 text-sm transition-colors duration-150 cursor-pointer min-h-[44px] ${
-            liked ? "text-rose-500 font-semibold" : "text-muted hover:text-rose-500"
-          }`}
-          aria-label={liked ? "เอาถูกใจออก" : "ถูกใจ"}
-        >
-          <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
-          <span data-font="ui">{likesCount}</span>
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            if (onCommentClick) onCommentClick(review);
-          }}
-          className="flex items-center gap-1.5 text-sm text-muted hover:text-primary transition-colors duration-150 cursor-pointer min-h-[44px]"
-          aria-label="คอมเมนต์"
-        >
-          <MessageCircle className="w-4 h-4" />
-          <span data-font="ui">{review.comments.length}</span>
-        </button>
-        {currentUserId && review.userId === currentUserId && (
-          <div className="w-full md:w-auto md:ml-auto flex items-center gap-2 mt-1 md:mt-0 border-t border-dashed border-border/60 pt-3 md:pt-0 md:border-t-0">
-            <Link
-              onClick={(e) => e.stopPropagation()}
-              href={`/review/new?editId=${review.id}`}
-              className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-primary-light/40 hover:bg-primary-light/60 text-primary-ink shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer min-h-[44px]"
-              data-font="ui"
-            >
-              <PenLine className="w-4 h-4" />
-              <span>แก้ไข</span>
-            </Link>
-            <button
-              onClick={handleDeleteClick}
-              disabled={isDeleting}
-              className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-rose-50 hover:bg-rose-100/80 text-rose-600 shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer min-h-[44px] disabled:opacity-50 disabled:transform-none disabled:shadow-none"
-              data-font="ui"
-              aria-label="ลบรีวิว"
-            >
-              {isDeleting ? (
-                <span className="w-4 h-4 border-2 border-rose-500/30 border-t-rose-500 rounded-full animate-spin" />
-              ) : (
-                <Trash2 className="w-4 h-4" />
-              )}
-              <span>ลบ</span>
-            </button>
-          </div>
-        )}
-      </div>
-    </article>
-  );
-}
 
 export function ProfileContent({ dbUser }: Props) {
   const [activeTab, setActiveTab] = useState<"reviews" | "likes">("reviews");
   const [selectedReview, setSelectedReview] = useState<DbReview | null>(null);
+  const [shareReview, setShareReview] = useState<Review | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const initials = (dbUser.name || "?").charAt(0).toUpperCase();
   const joinDate = new Date(dbUser.createdAt).toLocaleDateString("th-TH", {
@@ -610,12 +365,27 @@ export function ProfileContent({ dbUser }: Props) {
           dbUser.reviews.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {dbUser.reviews.map((review) => (
-                <ProfileReviewCard 
+                <ReviewCard 
                   key={review.id} 
-                  review={review} 
-                  author={dbUser} 
+                  review={{ ...review, user: dbUser } as any} 
                   currentUserId={dbUser.id} 
-                  onCommentClick={(r) => setSelectedReview(r)}
+                  onCommentClick={(r) => setSelectedReview(r as any)}
+                  onShareClick={(r) => setShareReview(r as any)}
+                  onEditClick={(r) => {
+                    window.location.href = `/review/new?editId=${r.id}`;
+                  }}
+                  onDeleteClick={async (r) => {
+                    if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบรีวิวนี้? การดำเนินการนี้ไม่สามารถยกเลิกได้")) {
+                      return;
+                    }
+                    setDeletingId(r.id);
+                    const result = await deleteReview(r.id);
+                    setDeletingId(null);
+                    if (result.error) {
+                      alert(result.error);
+                    }
+                  }}
+                  isDeleting={deletingId === review.id}
                 />
               ))}
             </div>
@@ -637,12 +407,12 @@ export function ProfileContent({ dbUser }: Props) {
           dbUser.likes.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {dbUser.likes.map((like) => (
-                <ProfileReviewCard 
+                <ReviewCard 
                   key={like.id} 
-                  review={like.review} 
-                  author={like.review.user} 
+                  review={like.review as any} 
                   currentUserId={dbUser.id} 
-                  onCommentClick={(r) => setSelectedReview(r)}
+                  onCommentClick={(r) => setSelectedReview(r as any)}
+                  onShareClick={(r) => setShareReview(r as any)}
                 />
               ))}
             </div>
@@ -668,6 +438,16 @@ export function ProfileContent({ dbUser }: Props) {
           review={selectedReview as any}
           onClose={() => setSelectedReview(null)}
           currentUserId={dbUser.id}
+          onShareClick={(r) => {
+            setSelectedReview(null);
+            setShareReview(r as any);
+          }}
+        />
+      )}
+      {shareReview && (
+        <ShareCardModal
+          review={shareReview as any}
+          onClose={() => setShareReview(null)}
         />
       )}
     </main>

@@ -49,7 +49,7 @@ export default async function NewReviewPage({ searchParams }: PageProps) {
         ratingLearning: review.ratingLearning,
         ratingWorkload: review.ratingWorkload,
         ratingCulture: review.ratingCulture,
-        pay: review.pay ? String(review.pay) : "",
+        pay: review.pay !== null ? String(review.pay) : "",
         payType: review.payType || "บาท/เดือน",
         content: review.content,
         isAnonymous: review.isAnonymous,
