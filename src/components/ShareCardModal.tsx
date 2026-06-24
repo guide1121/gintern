@@ -12,11 +12,20 @@ type Company = {
   logo: string | null;
 };
 
+type Badge = {
+  id: string;
+  name: string;
+  description: string | null;
+  icon: string | null;
+};
+
 type User = {
   id: string;
   name: string;
   image: string | null;
   role: string | null;
+  showBadges?: boolean;
+  badges?: Badge[];
 };
 
 type Review = {
@@ -237,7 +246,19 @@ export function ShareCardModal({ review, onClose }: Props) {
                       {initials}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold truncate" data-font="ui">{displayName}</p>
+                      <div className="flex items-center gap-1">
+                        <p className="text-xs font-bold truncate" data-font="ui">{displayName}</p>
+                        {!review.isAnonymous && review.user?.showBadges !== false && review.user?.badges?.map((badge) => (
+                          <span
+                            key={badge.id}
+                            className="inline-flex items-center text-[7px] px-1 py-0.2 bg-white/70 rounded-full border border-slate-300 text-slate-700 font-semibold"
+                            title={badge.name}
+                            data-font="ui"
+                          >
+                            ✨
+                          </span>
+                        ))}
+                      </div>
                       <p className="text-[9px] opacity-75 truncate">{formattedDate}</p>
                     </div>
                   </div>

@@ -5,10 +5,19 @@ import { X, Heart, MessageCircle, Coins, GraduationCap, Briefcase, Send, Sparkle
 import { toggleLike, addComment } from "@/app/actions/review";
 import Link from "next/link";
 
+export type Badge = {
+  id: string;
+  name: string;
+  description: string | null;
+  icon: string | null;
+};
+
 type User = {
   id: string;
   name: string;
   image: string | null;
+  showBadges?: boolean;
+  badges?: Badge[];
 };
 
 type Comment = {
@@ -61,6 +70,8 @@ type Review = {
     name: string;
     image: string | null;
     role: string | null;
+    showBadges?: boolean;
+    badges?: Badge[];
   } | null;
 };
 
@@ -259,6 +270,18 @@ export function ReviewModal({ review, onClose, currentUserId, onShareClick }: Pr
                       <><Briefcase className="w-3 h-3" /> พนักงาน</>
                     )}
                   </span>
+                  {!review.isAnonymous && review.user?.showBadges !== false && review.user?.badges?.map((badge) => (
+                    <span
+                      key={badge.id}
+                      className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-accent-pale text-accent-ink border border-accent/20 shadow-sm"
+                      title={badge.description || ""}
+                      aria-label={`ตราสัญลักษณ์: ${badge.name}`}
+                      data-font="ui"
+                    >
+                      <span role="img" aria-hidden="true" className="mr-0.5">✨</span>
+                      {badge.name}
+                    </span>
+                  ))}
                 </div>
                 <p className="text-xs text-muted mt-0.5">{formattedDate}</p>
               </div>
