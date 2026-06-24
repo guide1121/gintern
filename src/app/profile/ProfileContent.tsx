@@ -43,6 +43,13 @@ type User = {
   role: string | null;
   instagram?: string | null;
   facebook?: string | null;
+  showBadges?: boolean;
+  badges?: {
+    id: string;
+    name: string;
+    description: string | null;
+    icon: string | null;
+  }[];
 };
 
 type Like = {
@@ -215,6 +222,25 @@ export function ProfileContent({ dbUser }: Props) {
                     </span>
                   ) : null
                 )}
+                {dbUser.badges?.map((badge) => (
+                  <span
+                    key={badge.id}
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border shadow-sm ${
+                      dbUser.showBadges !== false
+                        ? "bg-accent-pale text-accent-ink border-accent/20 animate-pulse-glow"
+                        : "bg-slate-100 text-slate-500 border-slate-200"
+                    }`}
+                    data-font="ui"
+                    title={badge.description || ""}
+                    aria-label={`ตราสัญลักษณ์: ${badge.name} ${dbUser.showBadges === false ? "(ซ่อนจากสาธารณะอยู่)" : ""}`}
+                  >
+                    <span role="img" aria-hidden="true">✨</span>
+                    {badge.name}
+                    {dbUser.showBadges === false && (
+                      <span className="text-[10px] font-normal text-slate-400 ml-0.5">(ซ่อนอยู่)</span>
+                    )}
+                  </span>
+                ))}
               </div>
               <p className="text-sm text-muted mt-0.5">{dbUser.email}</p>
             </div>

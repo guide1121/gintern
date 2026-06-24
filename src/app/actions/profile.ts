@@ -84,6 +84,7 @@ export async function updateProfile(formData: FormData) {
   const facebook = formData.get("facebook") as string;
   const deleteAvatar = formData.get("deleteAvatar") as string; // "true" or "false"
   const avatarFile = formData.get("avatarFile") as File | null;
+  const showBadges = formData.get("showBadges") === "true";
 
   if (!name || name.trim() === "") {
     return { error: "กรุณากรอกชื่อแสดงตัวตน" };
@@ -155,6 +156,7 @@ export async function updateProfile(formData: FormData) {
         instagram: instagram ? instagram.trim() : null,
         facebook: facebook ? facebook.trim() : null,
         image: finalImageUrl,
+        showBadges: showBadges,
       },
     });
 

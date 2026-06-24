@@ -41,6 +41,8 @@ const getRecentReviews = unstable_cache(
             email: true,
             image: true,
             role: true,
+            badges: true,
+            showBadges: true,
           },
         },
       },
@@ -63,7 +65,7 @@ export default async function Home() {
   if (session?.user && session.user.email) {
     const dbUser = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: { id: true, name: true, email: true, image: true, role: true },
+      select: { id: true, name: true, email: true, image: true, role: true, showBadges: true },
     });
     if (dbUser) {
       if (!dbUser.role) {
@@ -75,6 +77,7 @@ export default async function Home() {
         email: dbUser.email,
         image: dbUser.image,
         role: dbUser.role,
+        showBadges: dbUser.showBadges,
       };
     }
   }

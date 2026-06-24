@@ -21,6 +21,7 @@ type Props = {
     role: string | null;
     instagram?: string | null;
     facebook?: string | null;
+    showBadges?: boolean;
   };
 };
 
@@ -151,6 +152,7 @@ export function EditProfileForm({ user }: Props) {
   const [fieldOfStudy, setFieldOfStudy] = useState(user.fieldOfStudy || "");
   const [instagram, setInstagram] = useState(user.instagram || "");
   const [facebook, setFacebook] = useState(user.facebook || "");
+  const [showBadges, setShowBadges] = useState(user.showBadges !== false);
 
   // ค้นหามหาวิทยาลัย (Combobox States)
   const [uniSearch, setUniSearch] = useState(user.studyPlace || "");
@@ -333,6 +335,7 @@ export function EditProfileForm({ user }: Props) {
     formData.append("instagram", instagram);
     formData.append("facebook", facebook);
     formData.append("deleteAvatar", deleteAvatar ? "true" : "false");
+    formData.append("showBadges", showBadges ? "true" : "false");
     
     if (avatarFile) {
       formData.append("avatarFile", avatarFile);
@@ -682,6 +685,42 @@ export function EditProfileForm({ user }: Props) {
                   className="w-full bg-white border border-border rounded-xl px-4 py-2.5 text-ink placeholder:text-muted outline-none focus:ring-2 focus:ring-primary transition-shadow text-sm"
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Privacy Settings: Badge Visibility Toggle */}
+          <div className="border-t border-border pt-4 space-y-3">
+            <h3 className="text-sm font-medium text-ink" data-font="ui">
+              การตั้งค่าความเป็นส่วนตัวตราสัญลักษณ์
+            </h3>
+            <div className="flex items-center justify-between p-4 border border-border rounded-xl bg-surface/30">
+              <div className="space-y-0.5">
+                <label htmlFor="showBadges" className="text-sm font-medium text-ink block" data-font="ui">
+                  แสดงตราสัญลักษณ์บนโปรไฟล์ของคุณ
+                </label>
+                <p className="text-xs text-muted">
+                  เปิดหรือปิดการแสดงผลตราสัญลักษณ์พิเศษ เช่น ตรา "ผู้รีวิวยุคบุกเบิก" บนข้อมูลการรีวิวและหน้าโปรไฟล์สาธารณะของคุณ
+                </p>
+              </div>
+              
+              {/* Custom Toggle Switch */}
+              <button
+                type="button"
+                id="showBadges"
+                onClick={() => setShowBadges(!showBadges)}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary ${
+                  showBadges ? "bg-accent" : "bg-slate-200"
+                }`}
+                role="switch"
+                aria-checked={showBadges}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                    showBadges ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
             </div>
           </div>
 

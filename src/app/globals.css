@@ -73,14 +73,14 @@ nav,
 
 @keyframes pulse-glow {
   0%, 100% {
-    opacity: 0.6;
-    transform: scale(0.97);
-    filter: drop-shadow(0 0 8px rgba(127, 193, 232, 0.4));
+    opacity: 0.85;
+    transform: scale(0.98);
+    box-shadow: 0 0 6px oklch(0.78 0.09 170 / 0.25);
   }
   50% {
     opacity: 1;
-    transform: scale(1.03);
-    filter: drop-shadow(0 0 25px rgba(125, 208, 184, 0.7));
+    transform: scale(1.02);
+    box-shadow: 0 0 16px oklch(0.78 0.09 170 / 0.55);
   }
 }
 
@@ -104,6 +104,7 @@ nav,
 
 .animate-pulse-glow {
   animation: pulse-glow 2.5s ease-in-out infinite;
+  will-change: transform, opacity, box-shadow;
 }
 
 .animate-content-fade {

@@ -12,12 +12,21 @@ export type Company = {
   logo: string | null;
 };
 
+export type Badge = {
+  id: string;
+  name: string;
+  description: string | null;
+  icon: string | null;
+};
+
 export type User = {
   id: string;
   name: string;
   email?: string | null;
   image: string | null;
   role: string | null;
+  badges?: Badge[];
+  showBadges?: boolean;
 };
 
 export type Like = {
@@ -232,7 +241,7 @@ export function ReviewCard({
           )
         )}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap">
             {!review.isAnonymous && review.user?.id ? (
               <Link
                 href={`/profile/${review.user.id}`}
@@ -245,6 +254,18 @@ export function ReviewCard({
             ) : (
               <span className="font-medium text-ink" data-font="ui">{displayName}</span>
             )}
+            {!review.isAnonymous && review.user?.showBadges !== false && review.user?.badges?.map((badge) => (
+              <span
+                key={badge.id}
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-accent-pale text-accent-ink border border-accent/20 shadow-sm"
+                title={badge.description || ""}
+                aria-label={`ตราสัญลักษณ์: ${badge.name}`}
+                data-font="ui"
+              >
+                <span role="img" aria-hidden="true" className="mr-0.5">✨</span>
+                {badge.name}
+              </span>
+            ))}
             <ExperienceBadge type={review.experienceType} />
           </div>
           <p className="text-sm text-muted truncate">

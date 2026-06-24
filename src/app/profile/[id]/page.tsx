@@ -31,6 +31,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
   const targetUser = await prisma.user.findUnique({
     where: { id },
     include: {
+      badges: true,
       reviews: {
         where: {
           isAnonymous: false, // ดึงเฉพาะรีวิวที่ไม่ได้เปิด Anonymous

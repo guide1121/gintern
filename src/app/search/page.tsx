@@ -23,7 +23,7 @@ export default async function SearchPage({
   if (session?.user && session.user.email) {
     const dbUser = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: { id: true, name: true, email: true, image: true, role: true },
+      select: { id: true, name: true, email: true, image: true, role: true, showBadges: true },
     });
     if (dbUser) {
       currentUser = {
@@ -32,6 +32,7 @@ export default async function SearchPage({
         email: dbUser.email,
         image: dbUser.image,
         role: dbUser.role,
+        showBadges: dbUser.showBadges,
       };
     }
   }
@@ -69,6 +70,8 @@ export default async function SearchPage({
           email: true,
           image: true,
           role: true,
+          badges: true,
+          showBadges: true,
         },
       },
     },

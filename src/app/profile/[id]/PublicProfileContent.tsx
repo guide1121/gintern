@@ -39,6 +39,13 @@ type User = {
   role: string | null;
   instagram?: string | null;
   facebook?: string | null;
+  showBadges?: boolean;
+  badges?: {
+    id: string;
+    name: string;
+    description: string | null;
+    icon: string | null;
+  }[];
 };
 
 type Like = {
@@ -175,6 +182,18 @@ export function PublicProfileContent({ targetUser, currentUserId }: Props) {
                     </span>
                   ) : null
                 )}
+                {targetUser.showBadges !== false && targetUser.badges?.map((badge) => (
+                  <span
+                    key={badge.id}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-accent-pale text-accent-ink border border-accent/20 shadow-sm animate-pulse-glow"
+                    data-font="ui"
+                    title={badge.description || ""}
+                    aria-label={`ตราสัญลักษณ์: ${badge.name}`}
+                  >
+                    <span role="img" aria-hidden="true">✨</span>
+                    {badge.name}
+                  </span>
+                ))}
               </div>
             </div>
 

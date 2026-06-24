@@ -22,12 +22,14 @@ model User {
   role           String?
   instagram      String?
   facebook       String?
+  showBadges     Boolean   @default(true)
 
   accounts Account[]
   sessions Session[]
   reviews  Review[]
   likes    Like[]
   comments Comment[]
+  badges   Badge[]   @relation("UserBadges")
 }
 
 model Account {
@@ -134,4 +136,13 @@ model Feedback {
   subject   String?
   message   String   @db.Text
   createdAt DateTime @default(now())
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?  @db.Text
+  icon        String?
+  createdAt   DateTime @default(now())
+  users       User[]   @relation("UserBadges")
 }

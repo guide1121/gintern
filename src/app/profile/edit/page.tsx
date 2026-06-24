@@ -22,6 +22,7 @@ export default async function EditProfilePage() {
       role: true,
       instagram: true,
       facebook: true,
+      showBadges: true,
     },
   });
 
