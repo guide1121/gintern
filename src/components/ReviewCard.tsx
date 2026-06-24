@@ -188,7 +188,7 @@ export function ReviewCard({
   return (
     <article
       onClick={() => onCommentClick && onCommentClick(review)}
-      className="bg-surface rounded-2xl p-5 shadow-md hover:shadow-lg transition-shadow duration-200 ease-out cursor-pointer relative border border-border/40"
+      className="bg-surface rounded-2xl p-5 shadow-md hover:shadow-lg transition-shadow duration-200 ease-out cursor-pointer relative border border-border/40 h-full flex flex-col justify-between"
     >
       {/* Inline error toast */}
       {errorMsg && (
@@ -202,7 +202,8 @@ export function ReviewCard({
           <span>{errorMsg}</span>
         </div>
       )}
-      <div className="flex items-start gap-3 mb-3">
+      <div className="flex-1 flex flex-col">
+        <div className="flex items-start gap-3 mb-3">
         {!review.isAnonymous && review.user?.id ? (
           <Link
             href={`/profile/${review.user.id}`}
@@ -280,7 +281,7 @@ export function ReviewCard({
         <span className="text-ink font-medium" data-font="ui">{review.ratingOverall}</span>
       </div>
 
-      <p className="text-ink leading-[1.7] mb-4 text-sm" style={{ textWrap: "pretty" }}>
+      <p className="text-ink leading-[1.7] mb-4 text-sm line-clamp-3" style={{ textWrap: "pretty" }}>
         {review.content}
       </p>
 
@@ -311,8 +312,9 @@ export function ReviewCard({
           <span data-font="ui">ไม่ระบุเบี้ยเลี้ยง</span>
         </div>
       )}
+      </div>
 
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-3 border-t border-border">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-3 border-t border-border mt-auto">
         <button
           onClick={handleLikeClick}
           className={`flex items-center gap-1.5 text-sm transition-colors duration-150 cursor-pointer min-h-[44px] ${
