@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Search, Building2, PenLine, ShieldCheck, ArrowRight } from "lucide-react";
+import { Search, Building2, PenLine, ShieldCheck, ArrowRight, Coins, MessageSquare, Info, Shield, Heart, ChevronDown, Check, Clock, Star } from "lucide-react";
 import { ReviewModal } from "@/components/ReviewModal";
 import { ShareCardModal } from "@/components/ShareCardModal";
 import { ReviewCard, Review } from "@/components/ReviewCard";
@@ -50,10 +50,46 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
   const [shareReview, setShareReview] = useState<Review | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
+  
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const [aboutVisible, setAboutVisible] = useState(false);
+
+  const sortRef = useRef<HTMLDivElement>(null);
+  const [isSortOpen, setIsSortOpen] = useState(false);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [search, industry, sort, payMin]);
+
+  // Intersection Observer for About Section Reveal
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setAboutVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (aboutRef.current) {
+      observer.observe(aboutRef.current);
+    }
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  // Click Outside to close Custom Sort Dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
+        setIsSortOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
 
   // ค้นหาและรวบรวมประเภทธุรกิจ (Industry) ทั้งหมดจากข้อมูลจริงใน Database
@@ -128,25 +164,16 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
             ค้นหาและคัดกรองประสบการณ์ฝึกงานจริงจากรุ่นพี่ในบริษัทและตำแหน่งต่างๆ
           </p>
 
-          <div className="relative max-w-xl mx-auto">
+          <div className="relative max-w-xl mx-auto group/search">
             <input
               type="search"
               aria-label="ค้นหาบริษัทหรือตำแหน่งงาน"
               placeholder="ค้นหาบริษัท, ตำแหน่ง หรือสายงานที่สนใจ..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white rounded-xl px-5 py-3 pl-12 text-ink placeholder:text-muted outline-none focus:ring-2 focus:ring-primary shadow-md focus:shadow-lg transition-all duration-200 text-sm min-h-[44px]"
+              className="w-full bg-white rounded-xl px-5 py-3 pl-12 text-ink placeholder:text-muted outline-none border border-slate-200/60 focus:ring-4 focus:ring-primary/20 focus:border-primary shadow-md focus:shadow-lg transition-all duration-200 text-sm min-h-[44px]"
             />
-            <svg
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" strokeLinecap="round" />
-            </svg>
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted transition-transform duration-200 group-focus-within/search:scale-110 group-focus-within/search:text-primary" />
           </div>
         </div>
 
@@ -171,14 +198,21 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
                   key={ind}
                   onClick={() => setIndustry(ind)}
                   aria-pressed={industry === ind}
-                  className={`px-3.5 py-2 rounded-full text-sm whitespace-nowrap transition-all duration-200 cursor-pointer min-h-[40px] flex items-center justify-center gap-1 shrink-0 shadow-md hover:shadow-lg active:scale-[0.98] ${
+                  className={`group px-3.5 py-2 rounded-full text-sm whitespace-nowrap transition-all duration-200 cursor-pointer min-h-[40px] flex items-center justify-center gap-1 shrink-0 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-[0.97] border ${
                     industry === ind
-                      ? "bg-primary text-primary-ink font-medium shadow-md shadow-primary/20"
-                      : "bg-surface text-muted hover:bg-surface-hover hover:text-ink"
+                      ? "bg-primary text-primary-ink font-semibold border-primary/20 shadow-primary/10"
+                      : "bg-white text-muted hover:bg-slate-50 hover:text-ink border-slate-200/50"
                   }`}
                   data-font="ui"
                 >
-                  {ind === "ทั้งหมด" ? <><Building2 className="w-3.5 h-3.5" /> ทั้งหมด</> : ind}
+                  {ind === "ทั้งหมด" ? (
+                    <>
+                      <Building2 className="w-3.5 h-3.5 text-primary-ink/70 transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-3" /> 
+                      <span>ทั้งหมด</span>
+                    </>
+                  ) : (
+                    ind
+                  )}
                 </button>
               ))}
             </div>
@@ -187,10 +221,8 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
           {/* Row 2: Pay filter + Sort — compact row, full width on mobile */}
           <div className="px-4 py-2 flex items-center gap-2 border-t border-border/50">
             <div className="relative flex-1">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none transition-colors">
+                <Coins className="w-4 h-4 text-slate-400" />
               </span>
               <input
                 type="number"
@@ -198,31 +230,81 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
                 placeholder="เบี้ยเลี้ยงขั้นต่ำ (บาท)"
                 value={payMin}
                 onChange={(e) => setPayMin(e.target.value)}
-                className="w-full bg-surface rounded-xl pl-8 pr-3 py-2 text-sm text-ink placeholder:text-muted outline-none focus:ring-2 focus:ring-primary shadow-md focus:shadow-lg transition-all duration-200 min-h-[40px]"
+                className="w-full bg-white rounded-xl pl-9 pr-3 py-2 text-sm text-ink placeholder:text-muted outline-none border border-slate-200/50 focus:ring-4 focus:ring-primary/20 focus:border-primary shadow-sm focus:shadow-md transition-all duration-200 min-h-[40px]"
               />
             </div>
 
-            <div className="relative shrink-0">
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value as SortOption)}
+            {/* Custom Sort Select Dropdown */}
+            <div className="relative shrink-0" ref={sortRef}>
+              <button
+                type="button"
+                onClick={() => setIsSortOpen(!isSortOpen)}
+                aria-haspopup="listbox"
+                aria-expanded={isSortOpen}
                 aria-label="จัดเรียงลำดับรีวิว"
-                className="bg-surface rounded-xl pl-3 pr-8 py-2 text-sm text-ink outline-none focus:ring-2 focus:ring-primary shadow-md focus:shadow-lg transition-all duration-200 cursor-pointer appearance-none min-h-[40px] font-medium"
+                className="group flex items-center justify-between gap-2 bg-white rounded-xl px-3.5 py-2 text-sm text-ink outline-none border border-slate-200/50 focus:ring-4 focus:ring-primary/20 focus:border-primary shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer min-h-[40px] font-semibold"
                 data-font="ui"
               >
-                <option value="latest">ล่าสุด</option>
-                <option value="rating">คะแนนสูงสุด</option>
-                <option value="pay">เบี้ยเลี้ยงมากสุด</option>
-              </select>
-              <svg
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted pointer-events-none"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
+                <div className="flex items-center gap-1.5 text-primary-ink">
+                  {sort === "latest" && <Clock className="w-4 h-4 text-primary" />}
+                  {sort === "rating" && <Star className="w-4 h-4 text-amber-500 fill-amber-500" />}
+                  {sort === "pay" && <Coins className="w-4 h-4 text-emerald-500" />}
+                  
+                  <span>
+                    {sort === "latest" && "ล่าสุด"}
+                    {sort === "rating" && "คะแนนสูงสุด"}
+                    {sort === "pay" && "เบี้ยเลี้ยงมากสุด"}
+                  </span>
+                </div>
+                <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-300 ease-out ${
+                  isSortOpen ? "rotate-180 text-primary" : "group-hover:text-slate-600"
+                }`} />
+              </button>
+
+              {/* Dropdown Menu Options */}
+              <div 
+                role="listbox"
+                className={`absolute right-0 mt-2 w-48 bg-white border border-slate-200/60 rounded-xl shadow-lg z-30 py-1 transition-all duration-200 origin-top-right ${
+                  isSortOpen 
+                    ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" 
+                    : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
+                }`}
               >
-                <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+                {[
+                  { value: "latest", label: "ล่าสุด", icon: <Clock className="w-3.5 h-3.5" /> },
+                  { value: "rating", label: "คะแนนสูงสุด", icon: <Star className="w-3.5 h-3.5" /> },
+                  { value: "pay", label: "เบี้ยเลี้ยงมากสุด", icon: <Coins className="w-3.5 h-3.5" /> }
+                ].map((opt) => {
+                  const isSelected = sort === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      role="option"
+                      aria-selected={isSelected}
+                      onClick={() => {
+                        setSort(opt.value as SortOption);
+                        setIsSortOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-3.5 py-2.5 text-sm text-left transition-colors duration-150 cursor-pointer ${
+                        isSelected 
+                          ? "bg-primary-light/30 text-primary-ink font-semibold" 
+                          : "text-ink hover:bg-slate-50"
+                      }`}
+                      data-font="ui"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className={`transition-transform duration-200 ${
+                          isSelected ? "text-primary scale-110" : "text-slate-400"
+                        }`}>
+                          {opt.icon}
+                        </span>
+                        <span>{opt.label}</span>
+                      </div>
+                      {isSelected && <Check className="w-4 h-4 text-primary shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -319,9 +401,14 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
       </main>
 
       {/* About GIntern Section (เกี่ยวกับเว็บเรา) */}
-      <section className="border-t border-border/80 bg-surface/20 py-16 w-full">
+      <section 
+        ref={aboutRef}
+        className={`border-t border-border/60 bg-surface/20 py-16 w-full transition-all duration-500 ${
+          aboutVisible ? 'reveal-active' : ''
+        }`}
+      >
         <div className="max-w-5xl mx-auto px-6">
-          <div className="text-center max-w-xl mx-auto mb-12">
+          <div className="text-center max-w-xl mx-auto mb-12 reveal-item delay-100">
             <h2 className="text-2xl sm:text-3xl font-bold text-ink" data-font="ui">
               เกี่ยวกับ GIntern
             </h2>
@@ -332,34 +419,29 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
             {/* Card 1: เด่นที่สุด - ปลอดภัยด้วย Anonymous (กว้าง 2 คอลัมน์บน Desktop) */}
-            <div className="bg-surface rounded-2xl p-6 md:p-8 border border-border md:col-span-2 flex flex-col justify-between transition-shadow duration-200 shadow-md hover:shadow-lg group">
+            <div className="bg-white rounded-2xl p-6 md:p-8 border border-slate-200/50 md:col-span-2 flex flex-col justify-between shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-primary-light/60 transition-all duration-300 ease-out group reveal-item delay-200">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-primary-light/50 text-primary-ink flex items-center justify-center mb-6">
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                <div className="w-12 h-12 rounded-xl bg-primary-light/20 text-primary-ink border border-primary-light/40 flex items-center justify-center mb-6 group-hover:scale-105 group-hover:bg-primary-light/35 transition-[transform,background-color] duration-300">
+                  <Shield className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-bold text-ink mb-3" data-font="ui">ปลอดภัยด้วย Anonymous</h3>
+                <h3 className="text-xl font-bold text-ink mb-3 group-hover:text-primary-ink transition-colors" data-font="ui">ปลอดภัยด้วย Anonymous</h3>
                 <p className="text-muted text-sm leading-relaxed max-w-xl">
                   รุ่นพี่สามารถเลือกปิดบังหรือเปิดเผยตัวตนจริงในรีวิวได้ตามต้องการ พร้อมระบบ Anonymous Comment Guard ที่จะซ่อนตัวตนจริงของผู้เขียนในช่องคอมเมนต์โดยอัตโนมัติ เพื่อรักษาความเป็นส่วนตัวสูงสุดและสร้างความสบายใจให้กับทุกคนที่ต้องการแบ่งปันรีวิวตามจริง
                 </p>
               </div>
-              <span className="text-xs text-primary-ink/80 font-semibold mt-4 flex items-center gap-1.5" data-font="ui">
-                <ShieldCheck className="w-4 h-4 text-primary-ink shrink-0" />
+              <span className="text-xs text-primary-ink/80 font-semibold mt-5 flex items-center gap-1.5" data-font="ui">
+                <ShieldCheck className="w-4 h-4 text-primary" />
                 <span>ปลอดภัย 100% ไร้กังวล</span>
               </span>
             </div>
 
             {/* Card 2: ขนาดปกติ */}
-            <div className="bg-surface rounded-2xl p-6 border border-border md:col-span-1 flex flex-col justify-between transition-shadow duration-200 shadow-md hover:shadow-lg group">
+            <div className="bg-white rounded-2xl p-6 border border-slate-200/50 md:col-span-1 flex flex-col justify-between shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-accent/40 transition-all duration-300 ease-out group reveal-item delay-300">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-primary-light/50 text-primary-ink flex items-center justify-center mb-6">
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="M21 21l-4.35-4.35" strokeLinecap="round" />
-                  </svg>
+                <div className="w-12 h-12 rounded-xl bg-accent-pale/50 text-accent-ink border border-accent-pale/80 flex items-center justify-center mb-6 group-hover:scale-105 group-hover:bg-accent-pale transition-[transform,background-color] duration-300">
+                  <Search className="w-5 h-5" />
                 </div>
-                <h3 className="text-lg font-bold text-ink mb-2" data-font="ui">ค้นหารีวิวแบบเจาะลึก</h3>
+                <h3 className="text-lg font-bold text-ink mb-2 group-hover:text-accent-ink transition-colors" data-font="ui">ค้นหารีวิวแบบเจาะลึก</h3>
                 <p className="text-muted text-sm leading-relaxed">
                   คัดกรองข้อมูลตามประเภทธุรกิจ, ชื่อบริษัท, สายงาน และเช็คระดับเบี้ยเลี้ยงฝึกงานเฉลี่ยจริงแบบเรียลไทม์ เพื่อช่วยตอบโจทย์ชีวิตฝึกงานที่ดีที่สุด
                 </p>
@@ -367,14 +449,12 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
             </div>
 
             {/* Card 3: ขนาดปกติ */}
-            <div className="bg-surface rounded-2xl p-6 border border-border md:col-span-1 flex flex-col justify-between transition-shadow duration-200 shadow-md hover:shadow-lg group">
+            <div className="bg-white rounded-2xl p-6 border border-slate-200/50 md:col-span-1 flex flex-col justify-between shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-primary-light/40 transition-all duration-300 ease-out group reveal-item delay-400">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-primary-light/50 text-primary-ink flex items-center justify-center mb-6">
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
+                <div className="w-12 h-12 rounded-xl bg-primary-light/20 text-primary-ink border border-primary-light/30 flex items-center justify-center mb-6 group-hover:scale-105 group-hover:bg-primary-light/30 transition-[transform,background-color] duration-300">
+                  <MessageSquare className="w-5 h-5" />
                 </div>
-                <h3 className="text-lg font-bold text-ink mb-2" data-font="ui">พูดคุยไขข้อข้องใจ</h3>
+                <h3 className="text-lg font-bold text-ink mb-2 group-hover:text-primary-ink transition-colors" data-font="ui">พูดคุยไขข้อข้องใจ</h3>
                 <p className="text-muted text-sm leading-relaxed">
                   รุ่นน้องสามารถพิมพ์คอมเมนต์สอบถามรายละเอียดเพิ่มเติมกับผู้รีวิวได้โดยตรงในแต่ละโพสต์ เพื่อไขความกระจ่างในรายละเอียดงาน วัฒนธรรม หรือเรื่องราวเชิงลึก
                 </p>
@@ -382,7 +462,7 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
             </div>
 
             {/* Card 4: การ์ดเติมเต็มแบบยาว (Asymmetric Call-to-action) */}
-            <div className="bg-gradient-to-tr from-primary-light/30 to-accent-pale rounded-2xl p-6 border border-primary-light/30 md:col-span-2 flex flex-col justify-between transition-shadow duration-200 shadow-md hover:shadow-lg">
+            <div className="bg-gradient-to-br from-primary-light/20 via-bg to-accent-pale/25 rounded-2xl p-6 border border-primary-light/30 md:col-span-2 flex flex-col justify-between shadow-sm hover:shadow-md transition-all duration-300 ease-out reveal-item delay-400">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 h-full">
                 <div>
                   <h3 className="text-lg font-bold text-primary-ink mb-2" data-font="ui">
@@ -394,10 +474,11 @@ export function ReviewFeed({ user, dbReviews, initialSearch = "" }: Props) {
                 </div>
                 <Link
                   href={user ? "/review/new" : "/login"}
-                  className="bg-primary text-primary-ink px-5 py-3 rounded-xl text-sm font-semibold hover:bg-primary-hover shadow-md hover:shadow-lg transition-shadow duration-200 text-center w-full md:w-auto shrink-0 min-h-[44px] flex items-center justify-center cursor-pointer"
+                  className="group/btn bg-primary text-primary-ink px-5 py-3 rounded-xl text-sm font-semibold hover:bg-primary-hover shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-center w-full md:w-auto shrink-0 min-h-[44px] flex items-center justify-center cursor-pointer active:scale-95 gap-1.5"
                   data-font="ui"
                 >
-                  {user ? "เขียนรีวิวเลย" : "เข้าสู่ระบบเพื่อรีวิว"}
+                  <PenLine className="w-4 h-4 transition-transform duration-200 group-hover/btn:-rotate-6 group-hover/btn:scale-110" />
+                  <span>{user ? "เขียนรีวิวเลย" : "เข้าสู่ระบบเพื่อรีวิว"}</span>
                 </Link>
               </div>
             </div>

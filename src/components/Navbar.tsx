@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { PenLine, User, LogOut, ShieldAlert, X, MessageSquare, Menu, Home, Search, Info } from "lucide-react";
+import { PenLine, User, LogOut, ShieldAlert, X, MessageSquare, Menu, Home, Search, Info, LogIn } from "lucide-react";
 import { logout } from "@/app/actions/auth";
 import { ProfilePromptModal } from "@/components/ProfilePromptModal";
 
@@ -107,9 +107,9 @@ export function Navbar({ user }: Props) {
       <nav className="sticky top-0 z-30 bg-bg/85 backdrop-blur-md border-b border-border">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Link href="/" className="flex items-center gap-2 mr-2">
-              <Image src="/logo.png" alt="" aria-hidden="true" width={32} height={32} className="w-8 h-8" />
-              <span className="text-lg font-medium text-ink" data-font="ui">GIntern</span>
+            <Link href="/" className="flex items-center gap-2 mr-2 group select-none active:scale-95 transition-transform duration-100">
+              <Image src="/logo.png" alt="" aria-hidden="true" width={32} height={32} className="w-8 h-8 transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-6" />
+              <span className="text-lg font-medium text-ink transition-transform duration-300 ease-out group-hover:translate-x-0.5" data-font="ui">GIntern</span>
             </Link>
 
             {/* Desktop Navigation Links */}
@@ -120,7 +120,7 @@ export function Navbar({ user }: Props) {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`text-sm font-medium transition-all duration-150 relative py-1.5 ${
+                    className={`text-sm font-medium transition-all duration-150 relative py-1.5 group select-none active:scale-95 ${
                       active
                         ? "text-primary-ink font-semibold"
                         : "text-muted hover:text-ink"
@@ -128,9 +128,13 @@ export function Navbar({ user }: Props) {
                     data-font="ui"
                   >
                     {link.label}
-                    {active && (
-                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
-                    )}
+                    <span
+                      className={`absolute bottom-0 left-0 right-0 h-0.5 rounded-full transition-transform duration-300 origin-center ${
+                        active
+                          ? "bg-primary scale-x-100"
+                          : "bg-primary/30 scale-x-0 group-hover:scale-x-100"
+                      }`}
+                    />
                   </Link>
                 );
               })}
@@ -143,9 +147,8 @@ export function Navbar({ user }: Props) {
                 <button
                   ref={buttonRef}
                   onClick={() => setOpen(!open)}
-                  className="rounded-full ring-2 ring-primary-light hover:ring-primary transition-all duration-150 cursor-pointer focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 translate-y-0.5"
+                  className="rounded-full ring-2 ring-primary-light hover:ring-primary hover:scale-[1.05] active:scale-[0.95] transition-all duration-200 ease-out cursor-pointer focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 translate-y-0.5"
                   aria-expanded={open}
-                  aria-haspopup="true"
                   aria-label="เมนูโปรไฟล์"
                 >
                   <Avatar src={user.image} name={user.name} size={36} />
@@ -156,7 +159,7 @@ export function Navbar({ user }: Props) {
                   <div
                     ref={menuRef}
                     role="menu"
-                    className="hidden md:block absolute right-0 top-full mt-2 w-64 bg-surface rounded-2xl py-2 border border-border z-40 origin-top-right animate-in shadow-lg"
+                    className="hidden md:block absolute right-0 top-full mt-2 w-64 bg-surface rounded-2xl py-2 border border-border z-40 origin-top-right animate-dropdown shadow-lg"
                   >
                     <div className="px-4 py-3 border-b border-border">
                       <p className="text-sm font-medium text-ink truncate" data-font="ui">
@@ -173,11 +176,11 @@ export function Navbar({ user }: Props) {
                           href="/profile"
                           onClick={() => setOpen(false)}
                           role="menuitem"
-                          className="flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-xl text-primary-ink bg-primary-light hover:bg-primary transition-all duration-150 shadow-sm"
+                          className="flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-xl text-primary-ink bg-primary-light hover:bg-primary transition-all duration-200 group active:scale-[0.98] shadow-sm"
                           data-font="ui"
                         >
-                          <User className="w-4 h-4 text-primary-ink" />
-                          โปรไฟล์ของฉัน
+                          <User className="w-4 h-4 text-primary-ink transition-transform duration-200 group-hover:scale-110" />
+                          <span className="transition-transform duration-200 group-hover:translate-x-1">โปรไฟล์ของฉัน</span>
                         </Link>
                       </div>
 
@@ -188,32 +191,32 @@ export function Navbar({ user }: Props) {
                           href="/admin"
                           onClick={() => setOpen(false)}
                           role="menuitem"
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-rose-600 hover:text-rose-700 hover:bg-rose-50/50 font-medium transition-colors duration-150"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-rose-600 hover:text-rose-700 hover:bg-rose-50/50 font-medium transition-all duration-200 group active:scale-[0.98]"
                           data-font="ui"
                         >
-                          <ShieldAlert className="w-4 h-4 text-rose-500" />
-                          ระบบผู้ดูแลระบบ
+                          <ShieldAlert className="w-4 h-4 text-rose-500 transition-transform duration-200 group-hover:scale-110" />
+                          <span className="transition-transform duration-200 group-hover:translate-x-1">ระบบผู้ดูแลระบบ</span>
                         </Link>
                       )}
                       <Link
                         href="/review/new"
                         onClick={() => setOpen(false)}
                         role="menuitem"
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-ink hover:bg-surface-hover transition-colors duration-150"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-ink hover:bg-surface-hover transition-all duration-200 group active:scale-[0.98]"
                         data-font="ui"
                       >
-                        <PenLine className="w-4 h-4" />
-                        เขียนรีวิว
+                        <PenLine className="w-4 h-4 text-muted group-hover:text-ink transition-transform duration-200 group-hover:scale-110" />
+                        <span className="transition-transform duration-200 group-hover:translate-x-1">เขียนรีวิว</span>
                       </Link>
                       <Link
                         href="/contact"
                         onClick={() => setOpen(false)}
                         role="menuitem"
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-ink hover:bg-surface-hover transition-colors duration-150"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-ink hover:bg-surface-hover transition-all duration-200 group active:scale-[0.98]"
                         data-font="ui"
                       >
-                        <MessageSquare className="w-4 h-4" />
-                        ส่ง Feedback / ติดต่อเรา
+                        <MessageSquare className="w-4 h-4 text-muted group-hover:text-ink transition-transform duration-200 group-hover:scale-110" />
+                        <span className="transition-transform duration-200 group-hover:translate-x-1">ส่ง Feedback / ติดต่อเรา</span>
                       </Link>
                     </div>
 
@@ -225,11 +228,11 @@ export function Navbar({ user }: Props) {
                         <button
                           type="submit"
                           role="menuitem"
-                          className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-muted hover:text-ink hover:bg-surface-hover transition-colors duration-150 cursor-pointer text-left"
+                          className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-muted hover:text-ink hover:bg-surface-hover transition-all duration-200 group active:scale-[0.98] cursor-pointer text-left"
                           data-font="ui"
                         >
-                          <LogOut className="w-4 h-4" />
-                          ออกจากระบบ
+                          <LogOut className="w-4 h-4 text-muted group-hover:text-ink transition-transform duration-200 group-hover:scale-110" />
+                          <span className="transition-transform duration-200 group-hover:translate-x-1">ออกจากระบบ</span>
                         </button>
                       </form>
                     </div>
@@ -240,10 +243,11 @@ export function Navbar({ user }: Props) {
               <>
                 <Link
                   href="/login"
-                  className="hidden md:inline-block bg-primary text-primary-ink px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary-hover shadow-md hover:shadow-lg transition-shadow duration-200 active:scale-[0.97] cursor-pointer"
+                  className="hidden md:inline-flex items-center gap-2 bg-primary text-primary-ink px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary-hover shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.96] transition-all duration-200 cursor-pointer group"
                   data-font="ui"
                 >
-                  เข้าสู่ระบบ
+                  <LogIn className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-active:translate-x-1.5" />
+                  <span>เข้าสู่ระบบ</span>
                 </Link>
               </>
             )}
@@ -251,11 +255,11 @@ export function Navbar({ user }: Props) {
             {/* Hamburger Button for Mobile */}
             <button
               onClick={() => setOpen(!open)}
-              className="md:hidden p-2 text-muted hover:text-ink rounded-xl hover:bg-surface-hover transition-colors cursor-pointer min-w-[40px] min-h-[40px] flex items-center justify-center"
+              className="md:hidden p-2 text-muted hover:text-ink rounded-xl hover:bg-surface-hover transition-all duration-200 hover:scale-108 active:scale-90 cursor-pointer min-w-[40px] min-h-[40px] flex items-center justify-center group"
               aria-expanded={open}
               aria-label="เมนูนำทาง"
             >
-              <Menu className="w-6 h-6" />
+              <Menu className="w-6 h-6 transition-transform duration-200 group-active:rotate-12" />
             </button>
           </div>
         </div>
@@ -316,15 +320,15 @@ export function Navbar({ user }: Props) {
                       key={link.href}
                       href={link.href}
                       onClick={() => setOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors min-h-[44px] ${
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group active:scale-[0.98] min-h-[44px] ${
                         active
                           ? "bg-primary-light text-primary-ink font-semibold"
                           : "text-ink hover:bg-surface-hover"
                       }`}
                       data-font="ui"
                     >
-                      <Icon className={`w-4 h-4 ${active ? "text-primary-ink" : "text-muted"}`} />
-                      <span>{link.label}</span>
+                      <Icon className={`w-4 h-4 transition-transform duration-200 group-hover:scale-110 ${active ? "text-primary-ink" : "text-muted group-hover:text-ink"}`} />
+                      <span className="transition-transform duration-200 group-hover:translate-x-1">{link.label}</span>
                     </Link>
                   );
                 })}
@@ -339,41 +343,41 @@ export function Navbar({ user }: Props) {
                     <Link
                       href="/profile"
                       onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink hover:bg-surface-hover transition-colors min-h-[44px]"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink hover:bg-surface-hover transition-all duration-200 group active:scale-[0.98] min-h-[44px]"
                       data-font="ui"
                     >
-                      <User className="w-4 h-4 text-muted" />
-                      <span>โปรไฟล์ของฉัน</span>
+                      <User className="w-4 h-4 text-muted group-hover:text-ink transition-transform duration-200 group-hover:scale-110" />
+                      <span className="transition-transform duration-200 group-hover:translate-x-1">โปรไฟล์ของฉัน</span>
                     </Link>
 
                     {user.role === "admin" && (
                       <Link
                         href="/admin"
                         onClick={() => setOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-rose-600 hover:bg-rose-50/50 transition-colors min-h-[44px]"
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-rose-600 hover:bg-rose-50/50 transition-all duration-200 group active:scale-[0.98] min-h-[44px]"
                         data-font="ui"
                       >
-                        <ShieldAlert className="w-4 h-4 text-rose-500" />
-                        <span>ระบบผู้ดูแลระบบ</span>
+                        <ShieldAlert className="w-4 h-4 text-rose-500 transition-transform duration-200 group-hover:scale-110" />
+                        <span className="transition-transform duration-200 group-hover:translate-x-1">ระบบผู้ดูแลระบบ</span>
                       </Link>
                     )}
                     <Link
                       href="/review/new"
                       onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink hover:bg-surface-hover transition-colors min-h-[44px]"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink hover:bg-surface-hover transition-all duration-200 group active:scale-[0.98] min-h-[44px]"
                       data-font="ui"
                     >
-                      <PenLine className="w-4 h-4 text-muted" />
-                      <span>เขียนรีวิว</span>
+                      <PenLine className="w-4 h-4 text-muted group-hover:text-ink transition-transform duration-200 group-hover:scale-110" />
+                      <span className="transition-transform duration-200 group-hover:translate-x-1">เขียนรีวิว</span>
                     </Link>
                     <Link
                       href="/contact"
                       onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink hover:bg-surface-hover transition-colors min-h-[44px]"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink hover:bg-surface-hover transition-all duration-200 group active:scale-[0.98] min-h-[44px]"
                       data-font="ui"
                     >
-                      <MessageSquare className="w-4 h-4 text-muted" />
-                      <span>ส่ง Feedback / ติดต่อเรา</span>
+                      <MessageSquare className="w-4 h-4 text-muted group-hover:text-ink transition-transform duration-200 group-hover:scale-110" />
+                      <span className="transition-transform duration-200 group-hover:translate-x-1">ส่ง Feedback / ติดต่อเรา</span>
                     </Link>
                   </div>
                 </>
@@ -384,10 +388,11 @@ export function Navbar({ user }: Props) {
                     <Link
                       href="/login"
                       onClick={() => setOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl text-sm font-semibold text-primary-ink bg-primary hover:bg-primary-hover transition-colors shadow-md min-h-[48px]"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl text-sm font-semibold text-primary-ink bg-primary hover:bg-primary-hover transition-all duration-200 active:scale-[0.98] shadow-md min-h-[48px] group"
                       data-font="ui"
                     >
-                      เข้าสู่ระบบ
+                      <LogIn className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-active:translate-x-1" />
+                      <span>เข้าสู่ระบบ</span>
                     </Link>
                   </div>
                 </>
@@ -426,11 +431,24 @@ export function Navbar({ user }: Props) {
           from { opacity: 0; }
           to { opacity: 1; }
         }
+        @keyframes dropdownReveal {
+          from {
+            opacity: 0;
+            transform: scale(0.95) translateY(-8px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
         .animate-slide-in {
           animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .animate-fade-in {
           animation: fadeIn 0.2s ease-out forwards;
+        }
+        .animate-dropdown {
+          animation: dropdownReveal 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
       `}} />
 

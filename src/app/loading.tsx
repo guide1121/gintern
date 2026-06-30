@@ -29,7 +29,7 @@ export default function RootLoading() {
         GIntern
       </h3>
       <p className="text-sm text-muted mt-2 tracking-wide text-center max-w-[280px] animate-pulse">
-        กำลังโหลดข้อมูลฝึกงานจากรุ่นพี่...
+        Loading
       </p>
     </div>
   );

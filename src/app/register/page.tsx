@@ -4,16 +4,78 @@ import { useState } from "react";
 import { register, loginWithGoogle } from "@/app/actions/auth";
 import Link from "next/link";
 import Image from "next/image";
+import { UserPlus, Loader2, ArrowLeft } from "lucide-react";
 
 export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const handleEmailBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        setEmailError("รูปแบบอีเมลไม่ถูกต้อง กรุณากรอกในรูปแบบ เช่น name@example.com");
+      } else {
+        setEmailError("");
+      }
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (emailError) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailRegex.test(e.target.value)) {
+        setEmailError("");
+      }
+    }
+  };
+
+  const handlePasswordBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value) {
+      if (value.length < 6) {
+        setPasswordError("รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร");
+      } else {
+        setPasswordError("");
+      }
+    } else {
+      setPasswordError("");
+    }
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (passwordError) {
+      if (e.target.value.length >= 6) {
+        setPasswordError("");
+      }
+    }
+  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    
     const formData = new FormData(e.currentTarget);
+    const emailVal = formData.get("email") as string;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!emailRegex.test(emailVal)) {
+      setEmailError("รูปแบบอีเมลไม่ถูกต้อง กรุณากรอกในรูปแบบ เช่น name@example.com");
+      return;
+    }
+
+    const passwordVal = formData.get("password") as string;
+    if (passwordVal.length < 6) {
+      setPasswordError("รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร");
+      return;
+    }
+
+    setLoading(true);
     const result = await register(formData);
     if (result?.error) {
       setError(result.error);
@@ -22,12 +84,24 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center bg-bg px-4">
+    <div className="min-h-dvh flex flex-col items-center justify-center bg-bg px-4 relative">
+      {/* ปุ่มกลับหน้าแรก */}
+      <div className="absolute top-4 left-4 md:top-8 md:left-8">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm text-muted hover:text-ink font-medium px-3.5 py-2 rounded-xl hover:bg-surface-hover active:scale-95 transition-all duration-200 group cursor-pointer"
+          data-font="ui"
+        >
+          <ArrowLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
+          <span>กลับหน้าแรก</span>
+        </Link>
+      </div>
+
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <Image src="/logo.png" alt="GIntern" width={40} height={40} className="w-10 h-10" />
-            <span className="text-2xl font-medium text-ink" data-font="ui">GIntern</span>
+          <Link href="/" className="inline-flex items-center gap-2 group select-none active:scale-95 transition-transform duration-150">
+            <Image src="/logo.png" alt="GIntern" width={40} height={40} className="w-10 h-10 transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-6" />
+            <span className="text-2xl font-medium text-ink transition-transform duration-300 ease-out group-hover:translate-x-0.5" data-font="ui">GIntern</span>
           </Link>
           <p className="text-muted mt-2">สร้างบัญชีเพื่อแชร์ประสบการณ์</p>
         </div>
@@ -35,8 +109,8 @@ export default function RegisterPage() {
         <div className="bg-surface rounded-2xl p-6 space-y-4">
           <form action={loginWithGoogle}>
             <button
-              type="submit"
-              className="w-full flex items-center justify-center gap-2 bg-bg border border-border py-2.5 rounded-xl font-medium text-ink hover:bg-surface-hover transition-colors cursor-pointer"
+               type="submit"
+               className="w-full flex items-center justify-center gap-2 bg-bg border border-border py-2.5 rounded-xl font-medium text-ink hover:bg-surface-hover hover:scale-[1.02] active:scale-[0.98] hover:shadow-sm transition-all duration-200 cursor-pointer"
               data-font="ui"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -55,63 +129,101 @@ export default function RegisterPage() {
             <div className="flex-1 h-px bg-border" />
           </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           {error && (
             <div className="bg-red-50 text-red-600 text-sm px-4 py-2.5 rounded-xl">{error}</div>
           )}
 
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-ink mb-1" data-font="ui">ชื่อที่แสดง</label>
-            <input
+             <input
               id="name"
               name="name"
               type="text"
               required
-              className="w-full bg-bg rounded-xl px-4 py-2.5 text-ink placeholder:text-muted outline-none focus:ring-2 focus:ring-primary transition-shadow"
+              className="w-full bg-bg rounded-xl px-4 py-2.5 text-ink placeholder:text-muted outline-none focus:ring-2 focus:ring-primary focus:scale-[1.01] transition-all duration-200"
               placeholder="เช่น น้องมิ้นท์"
             />
           </div>
 
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-ink mb-1" data-font="ui">อีเมล</label>
-            <input
+             <input
               id="email"
               name="email"
               type="email"
               required
-              className="w-full bg-bg rounded-xl px-4 py-2.5 text-ink placeholder:text-muted outline-none focus:ring-2 focus:ring-primary transition-shadow"
+              onBlur={handleEmailBlur}
+              onChange={handleEmailChange}
+              className={`w-full bg-bg rounded-xl px-4 py-2.5 placeholder:text-muted outline-none transition-all duration-200 focus:scale-[1.01] focus:ring-2 ${
+                emailError 
+                  ? "text-red-600 focus:ring-red-500/30" 
+                  : "text-ink focus:ring-primary"
+              }`}
+              style={{ border: `1px solid ${emailError ? '#EF4444' : 'transparent'}` }}
               placeholder="you@example.com"
             />
+            {emailError && (
+              <p className="text-xs mt-1.5 ml-1 animate-fade-in" style={{ color: '#EF4444' }} data-font="ui">
+                {emailError}
+              </p>
+            )}
           </div>
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-ink mb-1" data-font="ui">รหัสผ่าน</label>
-            <input
+             <input
               id="password"
               name="password"
               type="password"
               required
               minLength={6}
-              className="w-full bg-bg rounded-xl px-4 py-2.5 text-ink placeholder:text-muted outline-none focus:ring-2 focus:ring-primary transition-shadow"
+              onBlur={handlePasswordBlur}
+              onChange={handlePasswordChange}
+              className={`w-full bg-bg rounded-xl px-4 py-2.5 placeholder:text-muted outline-none transition-all duration-200 focus:scale-[1.01] focus:ring-2 ${
+                passwordError 
+                  ? "text-red-600 focus:ring-red-500/30" 
+                  : "text-ink focus:ring-primary"
+              }`}
+              style={{ border: `1px solid ${passwordError ? '#EF4444' : 'transparent'}` }}
               placeholder="อย่างน้อย 6 ตัวอักษร"
             />
+            {passwordError && (
+              <p className="text-xs mt-1.5 ml-1 animate-fade-in" style={{ color: '#EF4444' }} data-font="ui">
+                {passwordError}
+              </p>
+            )}
           </div>
 
-          <button
+           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary text-primary-ink py-2.5 rounded-xl font-medium hover:bg-primary-hover transition-colors disabled:opacity-50 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 bg-primary text-primary-ink py-2.5 rounded-xl font-medium hover:bg-primary-hover hover:scale-[1.02] active:scale-[0.98] hover:shadow-md disabled:opacity-50 disabled:pointer-events-none disabled:scale-100 transition-all duration-200 cursor-pointer group"
             data-font="ui"
           >
-            {loading ? "กำลังสมัคร..." : "สมัครสมาชิก"}
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>กำลังสมัครสมาชิก...</span>
+              </>
+            ) : (
+              <>
+                <UserPlus className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
+                <span>สมัครสมาชิก</span>
+              </>
+            )}
           </button>
         </form>
         </div>
 
-        <p className="text-center text-sm text-muted mt-4">
-          มีบัญชีแล้ว?{" "}
-          <Link href="/login" className="text-primary hover:underline" data-font="ui">
-            เข้าสู่ระบบ
+         <p className="text-center text-sm text-muted mt-6 flex items-center justify-center gap-1" data-font="ui">
+          <span>มีบัญชีผู้ใช้อยู่แล้ว?</span>
+          <Link
+            href="/login"
+            className="text-primary font-semibold relative py-0.5 group inline-flex items-center active:scale-95 transition-transform duration-100 cursor-pointer"
+          >
+            <span>เข้าสู่ระบบ</span>
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center" />
           </Link>
         </p>
       </div>

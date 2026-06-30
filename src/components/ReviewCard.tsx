@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { GraduationCap, Briefcase, Coins, Heart, MessageCircle, AlertTriangle, Share2, PenLine, Trash2 } from "lucide-react";
+import { GraduationCap, Briefcase, Coins, Heart, MessageCircle, AlertTriangle, Share2, PenLine, Trash2, Star } from "lucide-react";
 import { toggleLike } from "@/app/actions/review";
 
 export type Company = {
@@ -66,29 +66,53 @@ export type Review = {
 };
 
 export function Stars({ rating }: { rating: number }) {
-  const full = Math.floor(rating);
-  const half = rating % 1 >= 0.5;
   return (
-    <span className="text-lg text-star tracking-wider" role="img" aria-label={`${rating} ดาว`}>
-      {"★".repeat(full)}
-      {half && "★"}
-      {"☆".repeat(5 - full - (half ? 1 : 0))}
-    </span>
+    <div className="flex items-center gap-0.5 text-amber-400" role="img" aria-label={`${rating} จาก 5 คะแนน`}>
+      {[1, 2, 3, 4, 5].map((star) => {
+        const diff = rating - (star - 1);
+        let fillPct = 0;
+        if (diff >= 1) fillPct = 100;
+        else if (diff > 0) fillPct = Math.round(diff * 100);
+
+        return (
+          <div key={star} className="relative w-4 h-4 shrink-0">
+            {/* Gray star underlay */}
+            <Star className="absolute inset-0 w-full h-full text-slate-200" />
+            {/* Colored star overlay based on fill percentage */}
+            {fillPct > 0 && (
+              <div 
+                className="absolute inset-0 overflow-hidden" 
+                style={{ width: `${fillPct}%` }}
+              >
+                <Star className="w-4 h-4 text-amber-400 fill-amber-400 max-w-none" />
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
 export function RatingBar({ label, value }: { label: string; value: number }) {
   const pct = (value / 5) * 100;
+  
+  // Dynamic color coding based on rating value for better visual context
+  let barColor = "bg-rose-500";
+  if (value >= 4.5) barColor = "bg-emerald-500";
+  else if (value >= 3.5) barColor = "bg-primary";
+  else if (value >= 2.0) barColor = "bg-amber-500";
+
   return (
-    <div className="flex items-center gap-2 text-sm">
-      <span className="text-muted w-20 shrink-0">{label}</span>
-      <div className="flex-1 h-2 rounded-full bg-primary-light/50 overflow-hidden">
+    <div className="flex items-center gap-2 text-xs sm:text-sm">
+      <span className="text-muted w-16 sm:w-20 shrink-0 font-medium">{label}</span>
+      <div className="flex-1 h-1.5 sm:h-2 rounded-full bg-slate-100 overflow-hidden">
         <div
-          className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
+          className={`h-full rounded-full transition-all duration-700 ease-out ${barColor}`}
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="text-ink w-5 text-right font-medium" data-font="ui">
+      <span className="text-ink w-5 text-right font-semibold" data-font="ui">
         {value}
       </span>
     </div>
@@ -188,7 +212,7 @@ export function ReviewCard({
   return (
     <article
       onClick={() => onCommentClick && onCommentClick(review)}
-      className="bg-surface rounded-2xl p-5 shadow-md hover:shadow-lg transition-shadow duration-200 ease-out cursor-pointer relative border border-border/40 h-full flex flex-col justify-between"
+      className="group/card bg-white rounded-2xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 hover:border-primary-light/60 transition-all duration-300 ease-out cursor-pointer relative border border-slate-200/50 h-full flex flex-col justify-between"
     >
       {/* Inline error toast */}
       {errorMsg && (
@@ -236,7 +260,7 @@ export function ReviewCard({
               referrerPolicy="no-referrer"
             />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-primary-light text-primary-ink flex items-center justify-center text-sm font-medium shrink-0 select-none" data-font="ui">
+            <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-600 border border-slate-200/80 flex items-center justify-center text-sm font-semibold shrink-0 select-none" data-font="ui">
               {initials}
             </div>
           )
@@ -314,15 +338,15 @@ export function ReviewCard({
       )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-3 border-t border-border mt-auto">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-3 border-t border-slate-100 mt-auto">
         <button
           onClick={handleLikeClick}
-          className={`flex items-center gap-1.5 text-sm transition-colors duration-150 cursor-pointer min-h-[44px] ${
+          className={`group/btn flex items-center gap-1.5 text-sm transition-colors duration-200 cursor-pointer min-h-[44px] ${
             liked ? "text-rose-500 font-semibold" : "text-muted hover:text-rose-500"
           }`}
           aria-label={liked ? "เอาถูกใจออก" : "ถูกใจ"}
         >
-          <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
+          <Heart className={`w-4 h-4 transition-transform duration-200 group-hover/btn:scale-110 group-active/btn:scale-95 ${liked ? "fill-current animate-heart-glow" : ""}`} />
           <span data-font="ui">{likesCount}</span>
         </button>
         <button
@@ -330,10 +354,10 @@ export function ReviewCard({
             e.stopPropagation();
             if (onCommentClick) onCommentClick(review);
           }}
-          className="flex items-center gap-1.5 text-sm text-muted hover:text-primary transition-colors duration-150 cursor-pointer min-h-[44px]"
+          className="group/btn flex items-center gap-1.5 text-sm text-muted hover:text-primary transition-colors duration-200 cursor-pointer min-h-[44px]"
           aria-label="คอมเมนต์"
         >
-          <MessageCircle className="w-4 h-4" />
+          <MessageCircle className="w-4 h-4 transition-transform duration-200 group-hover/btn:scale-110 group-active/btn:scale-95" />
           <span data-font="ui">{review.comments?.length || 0}</span>
         </button>
 
@@ -342,7 +366,7 @@ export function ReviewCard({
           <div className="w-full md:w-auto md:ml-auto flex items-center gap-2 mt-1 md:mt-0 border-t border-dashed border-border/60 pt-3 md:pt-0 md:border-t-0">
             <button
               onClick={handleEdit}
-              className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-primary-light/40 hover:bg-primary-light/60 text-primary-ink shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer min-h-[44px]"
+              className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-primary-light/40 hover:bg-primary-light/60 text-primary-ink shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer min-h-[44px] active:scale-95"
               data-font="ui"
             >
               <PenLine className="w-4 h-4" />
@@ -351,7 +375,7 @@ export function ReviewCard({
             <button
               onClick={handleDelete}
               disabled={isDeleting}
-              className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-rose-50 hover:bg-rose-100/80 text-rose-600 shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer min-h-[44px] disabled:opacity-50 disabled:transform-none disabled:shadow-none"
+              className="flex-1 md:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-rose-50 hover:bg-rose-100/80 text-rose-600 shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer min-h-[44px] disabled:opacity-50 disabled:transform-none disabled:shadow-none active:scale-95"
               data-font="ui"
               aria-label="ลบรีวิว"
             >
@@ -372,12 +396,12 @@ export function ReviewCard({
               e.stopPropagation();
               onShareClick(review);
             }}
-            className={`flex items-center gap-1.5 text-sm text-muted hover:text-primary transition-colors duration-150 cursor-pointer min-h-[44px] ${
+            className={`group/btn flex items-center gap-1.5 text-sm text-muted hover:text-primary transition-colors duration-200 cursor-pointer min-h-[44px] ${
               onEditClick && onDeleteClick ? "" : "ml-auto"
             }`}
             aria-label="แชร์การ์ดรูปภาพ"
           >
-            <Share2 className="w-4 h-4" />
+            <Share2 className="w-4 h-4 transition-transform duration-200 group-hover/btn:scale-110" />
             <span className="hidden sm:inline text-xs font-semibold" data-font="ui">แชร์การ์ด</span>
           </button>
         )}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { X, Heart, MessageCircle, Coins, GraduationCap, Briefcase, Send, Sparkles, Share2 } from "lucide-react";
+import { X, Heart, MessageCircle, Coins, GraduationCap, Briefcase, Send, Sparkles, Share2, Star } from "lucide-react";
 import { toggleLike, addComment } from "@/app/actions/review";
 import Link from "next/link";
 
@@ -76,29 +76,53 @@ type Review = {
 };
 
 function Stars({ rating }: { rating: number }) {
-  const full = Math.floor(rating);
-  const half = rating % 1 >= 0.5;
   return (
-    <span className="text-base text-star tracking-wider">
-      {"★".repeat(full)}
-      {half && "★"}
-      {"☆".repeat(5 - full - (half ? 1 : 0))}
-    </span>
+    <div className="flex items-center gap-0.5 text-amber-400" role="img" aria-label={`${rating} จาก 5 คะแนน`}>
+      {[1, 2, 3, 4, 5].map((star) => {
+        const diff = rating - (star - 1);
+        let fillPct = 0;
+        if (diff >= 1) fillPct = 100;
+        else if (diff > 0) fillPct = Math.round(diff * 100);
+
+        return (
+          <div key={star} className="relative w-3.5 h-3.5 shrink-0">
+            {/* Gray star underlay */}
+            <Star className="absolute inset-0 w-full h-full text-slate-200" />
+            {/* Colored star overlay based on fill percentage */}
+            {fillPct > 0 && (
+              <div 
+                className="absolute inset-0 overflow-hidden" 
+                style={{ width: `${fillPct}%` }}
+              >
+                <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400 max-w-none" />
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
 function RatingBar({ label, value }: { label: string; value: number }) {
   const pct = (value / 5) * 100;
+  
+  // Dynamic color coding based on rating value for better visual context
+  let barColor = "bg-rose-500";
+  if (value >= 4.5) barColor = "bg-emerald-500";
+  else if (value >= 3.5) barColor = "bg-primary";
+  else if (value >= 2.0) barColor = "bg-amber-500";
+
   return (
     <div className="flex items-center gap-2 text-xs">
-      <span className="text-muted w-16 shrink-0">{label}</span>
-      <div className="flex-1 h-1.5 rounded-full bg-primary-light/50 overflow-hidden">
+      <span className="text-muted w-14 sm:w-16 shrink-0 font-medium">{label}</span>
+      <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden">
         <div
-          className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
+          className={`h-full rounded-full transition-all duration-700 ease-out ${barColor}`}
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="text-ink w-4 text-right font-medium" data-font="ui">
+      <span className="text-ink w-4 text-right font-semibold" data-font="ui">
         {value}
       </span>
     </div>
@@ -191,19 +215,20 @@ export function ReviewModal({ review, onClose, currentUserId, onShareClick }: Pr
       <div className="absolute inset-0" onClick={onClose} />
 
       {/* Main Modal Box */}
-      <div className="bg-white rounded-none sm:rounded-2xl w-full max-w-4xl h-full sm:h-[80vh] flex flex-col md:flex-row overflow-hidden shadow-2xl relative z-10 animate-in">
+      <div className="bg-white rounded-2xl w-[95%] max-w-4xl h-[92vh] sm:h-[80vh] flex flex-col md:flex-row overflow-y-auto md:overflow-hidden shadow-2xl relative z-10 animate-in">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-muted hover:text-ink hover:bg-surface-hover p-1.5 rounded-full transition-colors z-20 cursor-pointer"
+          className="fixed md:absolute top-4 right-4 text-muted hover:text-ink hover:bg-surface-hover p-1.5 rounded-full transition-colors z-30 cursor-pointer bg-white/90 backdrop-blur-sm shadow-md border border-slate-200/50 md:bg-transparent md:border-none md:shadow-none"
           aria-label="ปิดหน้าต่าง"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* 1. คอลัมน์ซ้าย: เนื้อหารีวิว */}
-        <div className="w-full md:w-3/5 p-6 overflow-y-auto border-b md:border-b-0 md:border-r border-border/80 flex flex-col justify-between">
-          <div className="space-y-4">
+        <div className="w-full md:w-3/5 border-b md:border-b-0 md:border-r border-border/80 flex flex-col justify-between shrink-0 h-auto md:h-full">
+          {/* Scrollable content area */}
+          <div className="p-5 sm:p-6 space-y-4 h-auto md:flex-1 md:overflow-y-auto min-h-0">
             {/* Header: User Profile */}
             <div className="flex items-center gap-3">
               {!review.isAnonymous && review.user?.id ? (
@@ -288,7 +313,7 @@ export function ReviewModal({ review, onClose, currentUserId, onShareClick }: Pr
             </div>
 
             {/* Company & Position */}
-            <div className="bg-surface/50 rounded-xl p-4 border border-border/30 shadow-md hover:shadow-lg transition-shadow duration-200">
+            <div className="bg-slate-50/80 rounded-xl p-4 border border-slate-200/60 shadow-sm hover:shadow hover:-translate-y-0.5 transition-all duration-300 ease-out">
               <h2 className="text-lg font-bold text-ink mb-1" data-font="ui">
                 {review.company.name}
               </h2>
@@ -318,7 +343,8 @@ export function ReviewModal({ review, onClose, currentUserId, onShareClick }: Pr
             </div>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-border/40">
+          {/* Sticky action bar at the bottom */}
+          <div className="p-5 sm:p-6 pt-4 border-t border-slate-100 bg-white shrink-0 md:shadow-[0_-4px_12px_rgba(0,0,0,0.03)] z-10 md:sticky md:bottom-0">
             {/* Pay check */}
             {review.pay !== null ? (
               review.pay > 0 ? (
@@ -342,16 +368,16 @@ export function ReviewModal({ review, onClose, currentUserId, onShareClick }: Pr
             )}
 
             {/* Like, Comment, and Share buttons */}
-            <div className="flex items-center justify-between border-t border-border/40 pt-4">
+            <div className="flex items-center justify-between border-t border-slate-100 pt-4">
               <div className="flex items-center gap-6">
                 <button
                   onClick={handleLike}
-                  className={`flex items-center gap-1.5 text-sm transition-colors duration-150 cursor-pointer ${
-                    liked ? "text-rose-500 font-medium" : "text-muted hover:text-rose-500"
+                  className={`group/btn flex items-center gap-1.5 text-sm transition-colors duration-200 cursor-pointer ${
+                    liked ? "text-rose-500 font-semibold" : "text-muted hover:text-rose-500"
                   }`}
                   aria-label={liked ? "เอาถูกใจออก" : "ถูกใจ"}
                 >
-                  <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
+                  <Heart className={`w-4 h-4 transition-transform duration-200 group-hover/btn:scale-110 group-active/btn:scale-95 ${liked ? "fill-current animate-heart-glow" : ""}`} />
                   <span data-font="ui">{likesCount} ถูกใจ</span>
                 </button>
                 <span className="flex items-center gap-1.5 text-sm text-muted" data-font="ui">
@@ -363,10 +389,10 @@ export function ReviewModal({ review, onClose, currentUserId, onShareClick }: Pr
               {onShareClick && (
                 <button
                   onClick={() => onShareClick(review)}
-                  className="flex items-center gap-1.5 text-sm text-primary hover:text-primary-hover font-semibold transition-colors duration-150 cursor-pointer"
+                  className="group/btn flex items-center gap-1.5 text-sm text-primary hover:text-primary-hover font-semibold transition-colors duration-200 cursor-pointer"
                   aria-label="แชร์การ์ดรีวิว"
                 >
-                  <Share2 className="w-4 h-4" />
+                  <Share2 className="w-4 h-4 transition-transform duration-200 group-hover/btn:scale-110 group-active/btn:scale-95" />
                   <span data-font="ui">แชร์การ์ดรีวิว</span>
                 </button>
               )}
@@ -375,14 +401,14 @@ export function ReviewModal({ review, onClose, currentUserId, onShareClick }: Pr
         </div>
 
         {/* 2. คอลัมน์ขวา: คอมเมนต์ */}
-        <div className="w-full md:w-2/5 flex flex-col h-full bg-surface/30">
+        <div className="w-full md:w-2/5 flex flex-col h-auto md:h-full bg-surface/30 pb-16 md:pb-0 relative">
           {/* Header */}
-          <div className="px-4 py-4 border-b border-border/80 bg-white" data-font="ui">
+          <div className="px-4 py-4 border-b border-border/80 bg-white shrink-0" data-font="ui">
             <h3 className="text-sm font-semibold text-ink">ความคิดเห็น ({comments.length})</h3>
           </div>
 
           {/* List of comments */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="p-4 space-y-4 h-auto md:flex-1 md:overflow-y-auto min-h-0">
             {comments.length > 0 ? (
               comments.map((comment) => {
                 const isPostAuthor = comment.userId === review.userId;
@@ -415,7 +441,7 @@ export function ReviewModal({ review, onClose, currentUserId, onShareClick }: Pr
                         {commentInitials}
                       </div>
                     )}
-                    <div className="flex-1 bg-white rounded-2xl px-3.5 py-2.5 border border-border/50 shadow-md hover:shadow-lg transition-shadow duration-200">
+                    <div className="flex-1 bg-white rounded-2xl px-3.5 py-2.5 border border-slate-200/40 shadow-sm hover:shadow hover:border-primary-light/40 transition-all duration-200">
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-1.5 min-w-0">
                           <span className="text-xs font-semibold text-ink truncate block max-w-[120px]" data-font="ui">
@@ -451,7 +477,7 @@ export function ReviewModal({ review, onClose, currentUserId, onShareClick }: Pr
           </div>
 
           {/* Input Box */}
-          <form onSubmit={handleSendComment} className="p-3 bg-white border-t border-border/80 flex items-center gap-2">
+          <form onSubmit={handleSendComment} className="p-3 bg-white border-t border-border/80 flex items-center gap-2 sticky bottom-0 md:relative z-20 shrink-0 w-full shadow-[0_-6px_20px_rgba(0,0,0,0.06)] md:shadow-none">
             <input
               type="text"
               aria-label="เขียนความคิดเห็น"
@@ -459,12 +485,12 @@ export function ReviewModal({ review, onClose, currentUserId, onShareClick }: Pr
               disabled={!currentUserId || sending}
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              className="flex-1 bg-surface rounded-xl px-4 py-2.5 text-xs text-ink placeholder:text-muted outline-none border border-transparent focus:border-primary shadow-md focus:shadow-lg transition-shadow duration-200 min-h-[40px] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="flex-1 bg-slate-50 rounded-xl px-4 py-2.5 text-xs text-ink placeholder:text-muted outline-none border border-slate-200/50 focus:ring-4 focus:ring-primary/20 focus:border-primary shadow-sm focus:shadow transition-all duration-200 min-h-[40px] disabled:opacity-60 disabled:cursor-not-allowed"
             />
             <button
               type="submit"
               disabled={!currentUserId || !newComment.trim() || sending}
-              className="bg-primary text-primary-ink font-semibold p-2.5 rounded-xl hover:bg-primary-hover active:scale-95 shadow-md hover:shadow-lg transition-shadow duration-200 disabled:opacity-55 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none cursor-pointer"
+              className="bg-primary text-primary-ink font-semibold p-2.5 rounded-xl hover:bg-primary-hover active:scale-95 shadow-sm hover:shadow hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-55 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none cursor-pointer"
               aria-label="ส่งความคิดเห็น"
             >
               <Send className="w-3.5 h-3.5" />
